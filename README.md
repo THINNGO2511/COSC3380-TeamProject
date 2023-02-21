@@ -6,6 +6,7 @@ Project Team (8): Frank Landry, Jacob Bachtarie, Sakeyna Abdul-Aziz, Dinh Thinh 
 Domain knowledge:
 - The Point of Sale (POS) database includes users, inventory and sales data. This data is very important and dynamic, as users could analyze it and track the sales over a certain period of time to see business performance as well as maintain inventory and re-stock if necessary.
 - It is crucial to have all functionalities of the database to integrate seamlessly while still providing a user-friendly interface to extract reports and analytics for customers.
+
 Domain of Discourse (Miniworld):
 - The database represents an online brand-oriented clothing store.
 - The multi-brand online clothing store sells different articles of clothing, accessories, and shoes for any kind of customer, men, women, and kids. Customers may browse item categories, perform a search for their desired clothing items, and even filter search results. They can choose the size, color, and quantity of the item before adding it to their cart. Customers are able to view their shopping cart, edit and delete items from the cart, and view their subtotal. They also get notified if an item from their cart has changed in price or gone out of stock. The website is managed directly by employees, who can add or remove items as needed. Customers may also have the option to be notified about out-of-stock items once they return.
