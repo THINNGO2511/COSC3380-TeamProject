@@ -25,3 +25,11 @@
   </form>
 </body>
 </html>
+
+<?php
+
+$db = pg_connect(host=team8-instance-1.c9gh4dcxotkn.us-east-2.rds.amazonaws.com port=5432 dbname=postgres user=postgres password=Uma3380+);
+
+
+$sql = <<<EOF
+INSERT INTO 
