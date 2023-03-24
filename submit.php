@@ -32,4 +32,15 @@ $db = pg_connect(host=team8-instance-1.c9gh4dcxotkn.us-east-2.rds.amazonaws.com 
 
 
 $sql = <<<EOF
-INSERT INTO 
+INSERT INTO CUSTOMER (namefirst, namelast, phonenumber, email)
+VALUES('$_post[firstName]', '$_post[lastName]', '$_post[phoneNumber]', '$_post[email]');
+EOF;
+
+$ret = pg_query($db, $sql);
+if(!$ret) {
+  echo pg_last_error($db);
+  exit;
+}
+
+pg_close($db);
+?>
