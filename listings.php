@@ -1,39 +1,15 @@
 <html>
 <head>
-<style>
-
-table {
-margin-left: auto;
-margin-right: auto;
-width: 100%;
-border: 2px solid black;
-}
-
-body {
-background-color: #FA8072;
-}
-
-h1 {
-background-color: #FFE5B4;
-color: black;
-text-align: center;
-}
-
-p {
-color: white;
-text-align:center;
-}
-
-th, td {
-border: 2px solid black;
-}
-
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div style="width:30%;">
 <h1> Umaporium - Item Listings </h1>
+</div>
 
+<div>
 <p> Please see below for our item listings. </p>
+</div>
 
 <table>
 	<tr>
