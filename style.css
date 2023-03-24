@@ -1,0 +1,56 @@
+table {
+margin-left: auto;
+margin-right: auto;
+width: 100%;
+border: 2px solid black;
+}
+
+body {
+background-color: #FFC3A1;
+font-family: sans-serif;
+}
+
+h1 {
+background-color: #FFE5B4;
+color: black;
+text-align: center;
+}
+
+h2 {
+color: white;
+}
+
+div {
+background-color: #FFE5B4;
+border: 5px solid black;
+border-radius: 5px;
+width: 90%;
+margin:auto;
+}
+
+input {
+background-color: white;
+border: 2px solid black;
+border-radius: 5px;
+}
+
+p {
+color: black;
+text-align:center;
+}
+
+th, td {
+border: 2px solid black;
+}
+
+.column2 {
+float: left;
+width: 40%;
+margin-left: 6%;
+}
+
+.column3 {
+float: left;
+width: 30%;
+margin-left: 2%;
+}
