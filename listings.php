@@ -1,9 +1,12 @@
 <html>
 <head>
 <style>
-.center {
+
+table {
 margin-left: auto;
 margin-right: auto;
+width: 100%;
+border: 2px solid black;
 }
 
 body {
@@ -21,14 +24,10 @@ color: white;
 text-align:center;
 }
 
-table {
-width: 100%;
+th, td {
+border: 2px solid black;
 }
 
-table, th, td {
-border: 2px solid black;
-text-align: center;
-}
 </style>
 </head>
 <body>
@@ -36,7 +35,7 @@ text-align: center;
 
 <p> Please see below for our item listings. </p>
 
-<table class="center">
+<table>
 	<tr>
 		<th>Item Name</th>
 		<th>Item Description</th>
@@ -59,11 +58,17 @@ EOF;
    if(!$ret) {
       echo pg_last_error($db);
       exit;
-   } 
-   while($row = pg_fetch_row($ret)) {
-      echo "NAME = ". $row[1] ."\n";
-      echo "DESC = ". $row[3] ."\n";
-      echo "STOCK =  ".$row[4] ."\n\n";
    }
+echo "<table>";
+
+
+   while($row = pg_fetch_row($ret)) {
+      echo "<tr>";
+	echo "<td>" . $row['p_name'] . "</td>";
+	echo "<td>" . $row['description'] . "</td>";
+	echo "<td>" . $row['p_stock'] . "</td>";
+	echo "</tr>";
+   }
+echo "</table>";
    pg_close($db);
 ?>
