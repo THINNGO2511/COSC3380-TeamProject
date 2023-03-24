@@ -1,31 +1,11 @@
 <html>
 <head>
-<style>
-
-.center {
-margin-left: auto;
-margin-right: auto;
-}
-
-body {background-color: #FA8072;}
-
-h1 {
-background-color: #FFE5B4;
-color: black;
-text-align: center;
-}
-
-p {
-color: white;
-text-align:center;
-}
-
-li {listt-style: none;}
-
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="title;">
 <h1> Umaporium Staff - Item Editor </h1>
+</div>
 <p> Use the form below to add items to the database. </p>
 
 <ul>
