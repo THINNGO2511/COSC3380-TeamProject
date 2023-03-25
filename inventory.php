@@ -29,7 +29,6 @@
 <?php
 $db = pg_connect("host=team8-instance-1.c9gh4dcxotkn.us-east-2.rds.amazonaws.com dbname=postgres user=postgres password=Uma3380+") or die("Count not connect to server \n");
 
-echo "something";
 
 $query = "SELECT * FROM inventory";
 
