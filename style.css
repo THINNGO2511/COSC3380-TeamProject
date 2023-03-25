@@ -43,6 +43,10 @@ th, td {
 border: 2px solid black;
 }
 
+.title {
+width: 30%;
+}
+
 .column2 {
 float: left;
 width: 40%;
