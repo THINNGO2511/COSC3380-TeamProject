@@ -26,6 +26,7 @@ if (isset($_SESSION["userid"])) {
       <li><a href="about.html">About</a></li>
       <li><a href="listings.html">Listings</a></li>
       <li><a href="cart.html">Cart</a></li>
+      <li><a href="order.php">Order</a></li>
       <li class="login-button"><a href="<?php echo $loginButtonLink ?>"><?php echo $loginButtonText ?></a></li>
     </ul>
   </nav>
