@@ -169,7 +169,7 @@ class Dbh {
 		$stmt = $this->connect()->prepare($sql);
 		$stmt->execute([$c_id]);
 		$Array = $stmt->fetch(PDO::FETCH_ASSOC);
-		$query = 'INSERT INTO ordr(price, productlist, customerid) VALUES (?, ?, ?);';
+		$query = 'INSERT INTO ordr(price, p_id_list, customerid) VALUES (?, ?, ?);';
 		$stmt = $this->connect()->prepare($query);
 		return $stmt->execute([$price,$Array['p_id_list'],$c_id]);
 	}
