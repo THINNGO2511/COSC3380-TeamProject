@@ -5,7 +5,7 @@
     // Check if the user is logged in
     if (isset($_SESSION["userid"])) {
         $loginButtonText = "Logout";
-        $loginButtonLink = "includes/logout.inc.php?action=logout"; // replace with your account page URL
+        $loginButtonLink = "includes/logout.inc.php?action=logout"; // replace with logout function
     } else {
         $loginButtonText = "Login";
         $loginButtonLink = "login_page.php"; // replace with your login page URL
