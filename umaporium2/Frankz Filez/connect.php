@@ -113,7 +113,66 @@ class Dbh {
 		$stmt->execute([$keyword, $pid]);
 	}
 
+		public function displayCart($c_id){
+		$query = 'SELECT * FROM shoppingcart WHERE customerid = ?';
+		$stmt = $this->connect()->prepare($query);
+		$stmt->execute([$c_id]);
+		$Array = $stmt->fetch(PDO::FETCH_ASSOC);
+		$productString = substr($Array['p_id_list'], 1, -1);
+		$intArray = explode(',', $productString);
+		//foreach (array_combine($p_id, $quantity) as $p_id => $quantity) for when we have the quantities figured out fuck me 
+		foreach($intArray as $p_id){ 
+		$this->displayProduct($p_id);
+			}
+	}
 
+	public function displayProduct($p_id){
+		$sql = 'SELECT p_name, price FROM product WHERE p_id = ?';
+		$stmt = $this->connect()->prepare($sql);
+		$stmt->execute([$p_id]);
+		$product = $stmt->fetch();
+		echo '<p><a>'.$product['p_name'].'</a> <span class ="price">'.$product['price'].'</span></p>';
+	}
+
+	public function cartCount($c_id){
+		$sql = 'SELECT ARRAY_LENGTH(p_id_list, 1) FROM shoppingcart WHERE customerid = ?';
+		$stmt = $this->connect()->prepare($sql);
+		$stmt->execute([$c_id]);
+		$count = $stmt->fetch();
+		return $count;
+	}
+
+	public function cartTotal($c_id){
+		$query = 'SELECT * FROM shoppingcart WHERE customerid = ?';
+		$stmt = $this->connect()->prepare($query);
+		$stmt->execute([$c_id]);
+		$Array = $stmt->fetch(PDO::FETCH_ASSOC);
+		$productString = substr($Array['p_id_list'], 1, -1);
+		$intArray = explode(',', $productString);
+		$total = 0.00;
+		foreach($intArray as $p_id){
+		$total += $this->itemPrice($p_id);
+			}
+		return $total;
+	}
+
+	public function itemPrice($p_id){
+		$query = 'SELECT * FROM product WHERE p_id = ?';
+		$stmt = $this->connect()->prepare($query);
+		$stmt->execute([$p_id]);
+		$product = $stmt->fetch();
+		return $product['price'];
+	}
+
+	public function insertOrder($c_id, $price){
+		$sql = 'SELECT * FROM shoppingcart WHERE customerid = ?';
+		$stmt = $this->connect()->prepare($sql);
+		$stmt->execute([$c_id]);
+		$Array = $stmt->fetch(PDO::FETCH_ASSOC);
+		$query = 'INSERT INTO ordr(price, productlist, customerid) VALUES (?, ?, ?);';
+		$stmt = $this->connect()->prepare($query);
+		return $stmt->execute([$price,$Array['p_id_list'],$c_id]);
+	}
 }
 
 
