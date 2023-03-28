@@ -5,7 +5,7 @@ if (isset($_GET["action"]) && $_GET["action"] == "logout") {
     session_start();
     session_destroy();
 
-    // Redirect to the index.php file in the uma folder
+    // Redirect to the index.php file
     header("Location: ../index.php");
     exit;
 }
