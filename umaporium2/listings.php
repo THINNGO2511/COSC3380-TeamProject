@@ -6,6 +6,14 @@
 <html>
 <head>
 <link rel="stylesheet" href="styles.css">
+<style>
+table {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  border: 2px solid black;
+}
+</style>
 </head>
 <body>
 <div style="width:30%;">
