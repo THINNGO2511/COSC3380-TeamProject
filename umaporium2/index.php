@@ -24,6 +24,13 @@ h1, h2 {
 text-align:center;
 color:black;
 }
+	
+table {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  border: 2px solid black;
+}
 	</style>
 </head>
 <body>
