@@ -16,9 +16,5 @@ if($_SERVER["REQUEST_METHOD"] == "POST")
     $login->LoginUser();
         header("location: ../index.php");
 }
-/*else {
-    //redirect to home page
-    header("Location: ../index.php?error=posterror");
-}*/
 
 ?>
