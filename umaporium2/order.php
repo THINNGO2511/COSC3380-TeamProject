@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once(__DIR__ . '/Frankz Filez/connect.php');
+require_once(__DIR__ . 'connect.php');
 $dbh = new Dbh();
 
 ?>
