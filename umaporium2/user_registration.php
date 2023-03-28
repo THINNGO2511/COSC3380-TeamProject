@@ -7,14 +7,9 @@
   <body>
     <header>
       <nav>
-        <ul>
-          <li><a href="index.php">Home</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="listings.html">Listings</a></li>
-          <li><a href="cart.html">Cart</a></li>
-        </ul>
+      <?php include('./includes/navbar.php');?>
       </nav>
-    </header>
+  </header>
     <h2>SIGN UP</h2>
 
     <p>Already have an account? <a href="./login_page.php">Login</a></p>
