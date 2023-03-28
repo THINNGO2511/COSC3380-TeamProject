@@ -3,11 +3,7 @@
 if (isset($_GET['error']) && $_GET['error'] == 'invalid_password') {
   echo '<p class = "error-messsage">Invalid Password.</p>';
 }
-
-  
-
-    
-    ?>
+?>
 
     
 <!DOCTYPE html>
@@ -19,12 +15,7 @@ if (isset($_GET['error']) && $_GET['error'] == 'invalid_password') {
   <body>
   <header>
       <nav>
-        <ul>
-        <li><a href="index.php">Home</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="listings.html">Listings</a></li>
-      <li><a href="cart.html">Cart</a></li>
-        </ul>
+      <?php include('./includes/navbar.php');?>
       </nav>
     </header>
     <?php
@@ -32,9 +23,9 @@ if (isset($_GET['error']) && $_GET['error'] == 'invalid_password') {
    
   
 
-    // for testing: redirects to "hello world" page when user is in session
+    // open up staff portal when logged in 
     if(isset($_SESSION["userid"])) {
-      header("location: Frankz Filez/staffportal.php");
+      header("location: ./staffportal.php");
     }
     else {
     ?>
