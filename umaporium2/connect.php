@@ -35,12 +35,18 @@ class Dbh {
 			echo '<td>' . $row['price'] . '</th>';
 			echo '<td>';
 			echo '<form method="post">';
-			echo '<button type="button">' . 'Add to Cart' . '</button>';
+			echo '<button name="atc" class="button" value='.$row['p_id'].' type="submit">Add to Cart</button>';
 			echo '</form>';
 			echo '</td>';
 			echo '</tr>';
+			
+				
 		}
-
+		if ($_POST['atc']){
+			$id = (int)$_POST['atc'];
+			$uid = (int)$_SESSION['userid'];
+			$stamt = $this->atc($id, $uid);
+		}
 	}
 
 	public function search($keyword){
@@ -61,10 +67,15 @@ class Dbh {
 			echo '<td>' . $row['price'] . '</th>';
 			echo '<td>';
 			echo '<form method="post">';
-			echo '<button type="button">' . 'Add to Cart' . '</button>';
+			echo '<button name="atc" class="button" value='.$row['p_id'].' type="submit">Add to Cart</button>';
 			echo '</form>';
 			echo '</td>';
-			echo '</tr>';
+			echo '</tr>';	
+		}
+		if ($_POST['atc']){
+			$id = (int)$_POST['atc'];
+			$uid = (int)$_SESSION['userid'];
+			$stamt = $this->atc($id, $uid);
 		}
 
 
