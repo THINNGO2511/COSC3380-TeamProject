@@ -22,7 +22,7 @@ table {
 
 <br>
 
-<div>
+<div class="default">
 <h3 style="color:black;text-align:center"> Enter a search term </h3><br>
 <form method="POST">
 	<label for="keyword">Keyword:</label>
@@ -33,7 +33,7 @@ table {
 
 <br>
 
-<div>
+<div class="default">
 <p> Please see below for our item listings. </p>
 </div>
 
