@@ -13,6 +13,13 @@ table {
   width: 100%;
   border: 2px solid black;
 }
+	
+div {
+border: 5px solid black;
+border-radius: 5px;
+width: 90%;
+margin:auto;
+}
 </style>
 </head>
 <body>
@@ -22,7 +29,7 @@ table {
 
 <br>
 
-<div class="default">
+<div>
 <h3 style="color:black;text-align:center"> Enter a search term </h3><br>
 <form method="POST">
 	<label for="keyword">Keyword:</label>
@@ -33,7 +40,7 @@ table {
 
 <br>
 
-<div class="default">
+<div>
 <p> Please see below for our item listings. </p>
 </div>
 
