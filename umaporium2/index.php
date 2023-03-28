@@ -59,7 +59,7 @@ if (!isset($_SESSION["userid"])) {
 ?>
 <br>
 
-<div>
+<div class="column3">
 <h2> View our latest items! </h2>
 <button class="glow-on-hover" type="button" onclick="window.location.href='listings.php'">Click for more!</button>
 <?php
@@ -68,13 +68,13 @@ $TestObj2->displaylist();
 ?>
 </div>
 
-<div>
+<div class="column3">
 <h2> Continue Shopping </h2>
 <button class="glow-on-hover" type="button" onclick="window.location.href='cart.php'">Go to Cart!</button>
 <img src="cart.png" alt="Icon of a shopping cart." style="margin-left:18%;width:60%;height:40%;">
 </div>
 
-<div>
+<div class="column3">
 <h2> Need to change something? Click below to view your account.</h2>
 <button class="glow-on-hover" type="button" onclick="window.location.href='account.php'">View my Account!</button>
 <br>
