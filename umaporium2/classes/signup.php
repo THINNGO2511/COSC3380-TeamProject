@@ -33,7 +33,22 @@ class Signup extends Dbh {
             $stmt = null;
             header("location: ../index.php?error=stmtfailed");
             exit();
-        }
+        } else {
+		$stmt = $this->createCart($email);
+	}
+
         $stmt = null;
     }
+
+    protected function createCart($email) {
+		$stmt = $this->connect()->prepare('SELECT * FROM customer WHERE email=?;');
+
+		$stmt->execute([$email]);
+		while ($row = $stmt->fetch()) {
+			$cid = $row['customerid'];
+			$stamt = $this->connect()->prepare('INSERT INTO shoppingcart(customerid) VALUES (?);');
+			$stamt->execute([$cid]);
+		}
+	}
+	
 }
