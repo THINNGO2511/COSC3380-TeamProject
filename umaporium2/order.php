@@ -34,7 +34,7 @@ $dbh = new Dbh();
 				</form>
 				<?php
 					if(isset($_POST['submission'])){
-						$status = $dbh->insertOrder($_SESSION["userid"], $total);
+						$status = $dbh->insertOrder($_SESSION["userid"], round($total, 2));
 						if($status == true){
 							echo 'Order Successful :D </br>'; 
 							echo 'Thanks for Shopping at THE Umaporium!';
