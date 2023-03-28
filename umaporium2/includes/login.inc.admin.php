@@ -24,7 +24,7 @@ if (!password_verify($password, $user['password'])) {
 
 session_start();
 $_SESSION['userid'] = $user['id'];
-header("Location: ../Frankz Filez/staffportal.php");
+header("Location: ../staffportal.php");
 exit();
 
 $conn = null;
