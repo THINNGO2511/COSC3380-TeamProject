@@ -173,6 +173,32 @@ class Dbh {
 		$stmt = $this->connect()->prepare($query);
 		return $stmt->execute([$price,$Array['p_id_list'],$c_id]);
 	}
+	
+	public function display($uid) {
+		$sql1 = 'SELECT namefirst FROM customer WHERE customerid=';
+		$sql = $sql1.$uid;
+		$stmt = $this->connect()->query($sql);
+		while ($row = $stmt->fetch()) {
+			echo '<h1>Welcome to the Umaporium, ' . $row['namefirst'] . '!</h1>';
+		}
+	}
+
+	public function displaylist() {
+		$sql = 'SELECT * FROM product ORDER BY p_id ASC LIMIT 5';
+		$stmt = $this->connect()->query($sql);
+
+		echo "<table style='margin-left:auto;margin-right:auto;width:100%;table-layout:fixed;border: 2px solid black';>";
+
+		while($row = $stmt->fetch()) {
+			echo '<tr style="margin-left:auto;margin-right:auto;width:100%;border: 2px solid black";>';
+			echo '<td style="margin-left:auto;margin-right:auto;width:100%;border: 2px solid black";>' . $row['p_name'] . '</th>';
+			echo '<td style="margin-left:auto;margin-right:auto;width:100%;border: 2px solid black";>' . $row['brand'] . '</th>';
+			echo '<td style="margin-left:auto;margin-right:auto;width:100%;border: 2px solid black";>' . $row['price'] . '</th>';
+			echo '</tr>';
+		}
+
+		echo "</table>";
+	}
 }
 
 
