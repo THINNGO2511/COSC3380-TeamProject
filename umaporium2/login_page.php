@@ -19,7 +19,7 @@
     ?>
       <h2>LOGIN</h2>
       <br>
-      <h6>New User? <a href="./user_registration.html">Create an account</a></h6>
+      <h6>New User? <a href="./user_registration.php">Create an account</a></h6>
       <h6>Admin login <a href="./login_admin.php">here</a></h6>
       
       <!-- user login form -->
