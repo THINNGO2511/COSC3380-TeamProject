@@ -38,3 +38,21 @@ span.price {
 .btn:hover {
   background-color: #45a049;
 }
+
+
+input[type="submit"] {
+  background-color: #4CAF50; /* Set the background color */
+  border: none; /* Remove the border */
+  color: white; /* Set the text color */
+  padding: 12px 24px; /* Add some padding */
+  text-align: center; /* Center the text */
+  text-decoration: none; /* Remove the underline */
+  display: inline-block; /* Make the button a block element */
+  font-size: 16px; /* Set the font size */
+  margin-top: 20px; /* Add some margin to the top */
+}
+
+input[type="submit"]:hover {
+  background-color: #3e8e41; /* Change the background color on hover */
+  cursor: pointer; /* Change the cursor to a pointer on hover */
+}
