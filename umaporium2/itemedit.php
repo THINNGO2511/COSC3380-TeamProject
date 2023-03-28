@@ -17,7 +17,7 @@
 
 <br>
 
-<div>
+<div class="default">
 <p> Use the form below to edit items already in the database. Enter the new details below as applicable, and enter the unique PRODUCT ID to apply them to the selected product.</p>
 </div><br>
 
