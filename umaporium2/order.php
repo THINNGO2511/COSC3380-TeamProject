@@ -38,6 +38,11 @@ $dbh = new Dbh();
 						if($status == true){
 							echo 'Order Successful :D </br>'; 
 							echo 'Thanks for Shopping at THE Umaporium!';
+				?>
+							<form action="index.php" method="post">
+  							<input type="submit" value="Back to Home" name= "Back to Home">
+							</form> 
+				<?php
 						}
 						else{
 							echo 'Order Failed :<';
