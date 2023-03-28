@@ -102,7 +102,7 @@ h2 {
 color: white;
 }
 
-div {
+.default {
 border: 5px solid black;
 border-radius: 5px;
 width: 90%;
