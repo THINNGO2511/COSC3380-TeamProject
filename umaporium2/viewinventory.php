@@ -13,10 +13,11 @@ table {
   width: 100%;
   border: 2px solid black;
 }
+
 </style>
 </head>
 <body>
-<div style="width:30%;">
+<div class="title">
 <h1> Umaporium - View Inventory </h1>
 </div>
 
