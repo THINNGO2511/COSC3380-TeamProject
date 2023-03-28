@@ -1,15 +1,5 @@
 <?php
-session_start();
 include 'connect.php';
-
-// Check if the user is logged in
-if (isset($_SESSION["userid"])) {
-    $loginButtonText = "Account";
-    $loginButtonLink = "account.php"; // replace with your account page URL
-} else {
-    $loginButtonText = "Login";
-    $loginButtonLink = "user_registration.html"; // replace with your login page URL
-}
 ?>
 
 <!DOCTYPE html>
@@ -36,14 +26,7 @@ table {
 <body>
 <header>
   <nav>
-    <ul>
-      <li><a href="index.php">Home</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="listings.html">Listings</a></li>
-      <li><a href="cart.html">Cart</a></li>
-      <li><a href="order.php">Order</a></li>
-      <li class="login-button"><a href="<?php echo $loginButtonLink ?>"><?php echo $loginButtonText ?></a></li>
-    </ul>
+	<?php include('./includes/navbar.php');?>
   </nav>
 </header>
 <main>
