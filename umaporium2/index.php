@@ -18,6 +18,12 @@ if (isset($_SESSION["userid"])) {
     <meta charset="UTF-8">
     <title>Umaporium - Home</title>
     <link rel="stylesheet" href="styles.css">
+	
+<style>
+h1, h2 {
+text-align:center;
+color:black;
+}
 </head>
 <body>
 <header>
