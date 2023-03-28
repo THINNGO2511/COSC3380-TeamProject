@@ -1,4 +1,5 @@
 <?php
+	start_session();
 	include 'connect.php';
 ?>
 
@@ -23,6 +24,11 @@ margin:auto;
 </style>
 </head>
 <body>
+<header>
+  <nav>
+  <?php include('./includes/navbar.php');?>
+  </nav>
+</header>	
 <div style="width:30%;">
 <h1> Umaporium - Item Listings </h1>
 </div>
