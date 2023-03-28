@@ -22,6 +22,13 @@ table {
   width: 100%;
   border: 2px solid black;
 }
+
+div {
+border: 5px solid black;
+border-radius: 5px;
+width: 90%;
+margin:auto;
+}
 	</style>
 </head>
 <body>
