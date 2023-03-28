@@ -47,6 +47,56 @@ margin:auto;
 <br>
 
 <div>
+<p> Please see below for our item listings. When you have found an item you want, enter the PRODUCT ID and click 'Add to Cart'. </p>
+<form method="POST">
+	<label for="id">ID:</label>
+	<input type="text" id="id" name="id">
+	<input type="submit" name="atc" class="button" value="Add to Cart" />
+</form>
+
+</div>
+
+<br>
+
+<table>
+	<tr>
+		<th>Product_ID</th>
+		<th>Name</th>
+		<th>Color</th>
+		<th>Category</th>
+		<th>Description</th>
+		<th>Brand</th>
+		<th>Size</th>
+		<th>Price</th>
+		<th></th>
+	</tr>
+
+<?php
+error_reporting(0);
+$testObj = new Dbh();
+
+if($_POST['Search']){
+	$keyword = $_POST['keyword'];
+	$testObj->search($keyword);
+} 
+
+if ($_POST['atc']){
+	$id = (int)$_POST['id'];
+	$uid = (int)$_SESSION['userid'];
+	$testObj->atc($id, $uid);
+	$testObj->listings();
+} else {
+$testObj->listings();
+}
+
+?>
+
+</table>
+</body>
+</html>
+<br>
+
+<div>
 <p> Please see below for our item listings. </p>
 </div>
 
