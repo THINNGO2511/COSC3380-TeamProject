@@ -41,13 +41,7 @@ $orderHistory = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <header>
         <nav>
-            <ul>
-            <li><a href="index.php">Home</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="listings.html">Listings</a></li>
-      <li><a href="cart.html">Cart</a></li>
-                <li class="login-button"><a href="includes/logout.inc.php?action=logout">Logout</a></li>
-            </ul>
+            <?php include('./includes/navbar.php');?>
         </nav>
     </header>
     <main>
