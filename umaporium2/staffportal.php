@@ -6,10 +6,7 @@
 
 <div class="title;">
 <h1> Umaporium Staff - Web Portal </h1>
-<form action="../includes/logout.inc.php" method="get" class="logout-form">
-    <button type="submit" name="logout-submit">Logout</button>
-    <input type="hidden" name="action" value="logout">
- </form>
+	<button onclick="window.location.href='includes/logout.inc.php?action=logout';">Logout</button>
 </div>
 
 <br>
