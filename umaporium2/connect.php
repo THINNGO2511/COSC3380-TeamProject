@@ -212,12 +212,15 @@ class Dbh {
 	}
 	
 	public function atc($id, $uid) {
-		$sql = 'UPDATE shoppingcart SET p_id_list = array_append(p_id_list, ?) WHERE customerid=?';
-  		$stmt = $this->connect()->prepare($sql);
-  		$stmt->execute([$id, $uid]);
+		if ($id == 0) {
+			echo "";
+		} else {
+			$sql = 'UPDATE shoppingcart SET p_id_list = array_append(p_id_list, ?) WHERE customerid=?';
+  			$stmt = $this->connect()->prepare($sql);
+  			$stmt->execute([$id, $uid]);
 		
-		echo "Added successfully to shopping cart.";
-		
+			echo "Added successfully to shopping cart.";
+		}
 	} 
 }
 
