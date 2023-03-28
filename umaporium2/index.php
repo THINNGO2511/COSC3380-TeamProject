@@ -24,6 +24,7 @@ h1, h2 {
 text-align:center;
 color:black;
 }
+	</style>
 </head>
 <body>
 <header>
