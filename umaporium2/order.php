@@ -17,7 +17,7 @@ $dbh = new Dbh();
 					<h4>Cart
 						<span class = "price" style="color:black">
 						<i class = "fa fa-shopping-cart"></i>
-						<b><?php $dbh->cartCount($_SESSION["userid"]); ?></b>
+						<b><?php echo $dbh->cartCount($_SESSION["userid"]); ?></b>
 					</span>
 					</h4>
 				<?php $dbh->displayCart($_SESSION["userid"]); ?> 
