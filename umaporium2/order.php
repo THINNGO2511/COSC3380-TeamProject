@@ -10,14 +10,17 @@ $dbh = new Dbh();
 		<link rel = "stylesheet" href = "checkout_styles.css">
 	</head>
 	<body>
+		<h4><a href="./index.php"> < Back to homepage</a> &emsp; <a href="./cart.php"> < Shopping Cart</a></h4>
+		<div style="text-align:center">
 		<h1> Umaporium - Checkout </h1>
+		</div>
 		<div class ="row">
 			<div class="box">
 				<div class="container">
 					<h4>Cart
 						<span class = "price" style="color:black">
 						<i class = "fa fa-shopping-cart"></i>
-						<b><?php echo $dbh->cartCount($_SESSION["userid"]); ?></b>
+						<b><?php $dbh->cartCount($_SESSION["userid"]); ?></b>
 					</span>
 					</h4>
 				<?php $dbh->displayCart($_SESSION["userid"]); ?> 
