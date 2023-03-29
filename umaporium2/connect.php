@@ -222,8 +222,12 @@ class Dbh {
 			echo "Added successfully to shopping cart.";
 		}
 	} 
+
+	public function emptyCart($uid) {
+		$sql = "UPDATE shoppingcart SET p_id_list = '{}' WHERE customerid=?";
+		$stmt = $this->connect()->prepare($sql);
+		$stmt->execute([$uid]);
+	}
 }
 
-
 ?>
-
