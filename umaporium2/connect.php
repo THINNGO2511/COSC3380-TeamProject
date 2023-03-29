@@ -150,7 +150,7 @@ class Dbh {
 		$stmt = $this->connect()->prepare($sql);
 		$stmt->execute([$c_id]);
 		$count = $stmt->fetch();
-		return $count;
+		return $count['array_length'];
 	}
 
 	public function cartTotal($c_id){
