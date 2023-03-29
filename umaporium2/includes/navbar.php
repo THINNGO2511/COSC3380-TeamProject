@@ -14,11 +14,8 @@
 
     <ul>
         <li><a href="index.php">Home</a></li>
-        <li><a href="about.html">About</a></li>
         <li><a href="listings.php">Listings</a></li>
         <li><a href="cart.php">Cart</a></li>
-        <!-- change this once shopping cart is created -->
-        <li><a href="order.php">Order</a></li> 
         <?php if (isset($_SESSION["userid"])) { ?>
         <li><a href="account.php">Account</a></li> 
         <?php } ?>
