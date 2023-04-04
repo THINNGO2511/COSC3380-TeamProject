@@ -4,9 +4,9 @@ class Dbh {
 
 	protected function connect() {
         // Database credentials
-        $host = "team8-instance-1.c9gh4dcxotkn.us-east-2.rds.amazonaws.com";
+        $host = "team8uma.postgres.database.azure.com";
         $dbname = "postgres";
-        $dbuser = "postgres";
+        $dbuser = "postgres@team8uma";
         $dbpass = "Uma3380+";
 
         try {
