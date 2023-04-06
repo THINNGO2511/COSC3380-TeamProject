@@ -61,10 +61,16 @@ $TestObj2->displaylist();
 </div>
 
 <div class="column3">
-<h2> Continue Shopping </h2>
-<button class="glow-on-hover" type="button" onclick="window.location.href='cart.php'">Go to Cart!</button>
-<br><br>
-<img src="cart.png" alt="Icon of a shopping cart." style="margin-left:18%;width:60%;height:40%;">
+  <h2>Continue Shopping</h2>
+  <?php
+  if (isset($_SESSION["userid"])) {
+    echo '<button class="glow-on-hover" type="button" onclick="window.location.href=\'cart.php\'">Go to Cart!</button>';
+  } else {
+    echo '<button class="glow-on-hover" type="button" onclick="window.location.href=\'login_page.php\'">Login to Continue Shopping</button>';
+  }
+  ?>
+  <br><br>
+  <img src="cart.png" alt="Icon of a shopping cart." style="margin-left:18%;width:60%;height:40%;">
 </div>
 
 <div class="column3">
@@ -73,7 +79,7 @@ $TestObj2->displaylist();
 <br><br><br>
 </div>
 
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 <h2> Click one of the options above, or use our Navigation Bar up top for more! </h2>
 </main>
