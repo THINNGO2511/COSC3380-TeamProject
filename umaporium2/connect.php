@@ -228,6 +228,56 @@ class Dbh {
 		$stmt = $this->connect()->prepare($sql);
 		$stmt->execute([$uid]);
 	}
+
+
+	public function run_report($report) {
+		// Connect to the database
+		
+		$conn = $this->connect();
+		// Run the appropriate query based on the report name
+		switch ($report) {
+			case 'sales':
+				$stmt = $conn->prepare("SELECT orderdate::date AS date, SUM(price) AS total_sales 
+				FROM ordr 
+				GROUP BY date 
+				ORDER BY date;");
+				break;
+			case 'best_sellers':
+				$stmt = $conn->prepare("SELECT product.p_name, COUNT(*) AS quantity_sold
+				FROM ordr
+				INNER JOIN product ON product.p_id = ANY(ordr.p_id_list)
+				GROUP BY product.p_id
+				ORDER BY quantity_sold DESC
+				
+			");
+
+				break;
+			case 'best_categories':
+				$stmt = $conn->prepare("SELECT product.category, COUNT(*) AS quantity_sold
+				FROM ordr
+				INNER JOIN product ON product.p_id = ANY(ordr.p_id_list)
+				GROUP BY product.category
+				ORDER BY quantity_sold DESC
+				");
+				break;
+			default:
+				die("Invalid report selected.");
+		}
+		// Execute the query and fetch the results as an array of associative arrays
+		$stmt->execute();
+		$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		// Close the database connection
+		$conn = null;
+		// Return the results
+		return $results;
+	}
 }
+
+
+
+
+
+
+
 
 ?>

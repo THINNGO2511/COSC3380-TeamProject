@@ -36,5 +36,14 @@
 	<button style="height:10%;width:100%"> Edit Inventory </button>
 </form>
 </div>
+
+
+<div class="column3">
+<form action="reports.php">
+	<button style="height:10%;width:100%"> Reports </button>
+</form>
+</div>
+
+
 </body>
 </html>
