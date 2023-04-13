@@ -7,6 +7,7 @@
 <html>
 <head>
 <link rel="stylesheet" href="styles.css">
+<title>Browse Items</title>
 <style>
 table {
   margin-left: auto;
