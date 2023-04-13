@@ -79,7 +79,7 @@ $orderHistory = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <td><?php echo $order['price']; ?></td>
                         <td><?php echo $order['orderstatus'] ?></td>
                         <td><?php echo $order['orderdate']; ?></td>
-                        <td><a href="order_items.php?orderid=<?php echo $order['orderid']; ?>">View Items</a></td>
+                        <td><a href="order_summary.php?orderid=<?php echo $order['orderid']; ?>">View Items</a></td>
                     </tr>
                 <?php } ?>
             </tbody>
