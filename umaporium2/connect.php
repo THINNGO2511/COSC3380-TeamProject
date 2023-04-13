@@ -271,12 +271,56 @@ class Dbh {
 		// Return the results
 		return $results;
 	}
+	
+	
+		
+	public function orderData($orderid){
+		// Retrieve some data about the order(date, status, total), stuff it into a key-value array, and return said array.
+		$sql = 'SELECT orderdate, orderstatus, price FROM ordr WHERE orderid = ?';
+		$stmt = $this->connect()->prepare($sql);
+		$stmt->execute([$orderid]);
+		$order = $stmt->fetch();
+		$meta = array('date' => $order['orderdate'], 'status' => $order['orderstatus'], 'price' => $order['price']);
+		return $meta;
+	}
+
+	public function getOrder($uid, $orderid) {
+		$query = 'SELECT * FROM ordr WHERE customerid = ? AND orderid = ?';
+		$stmt = $this->connect()->prepare($query);
+		
+		$stmt->execute([$uid, $orderid]);
+		$Array = $stmt->fetch(PDO::FETCH_ASSOC);
+		$productString = substr($Array['p_id_list'], 1, -1);
+		$intArray = explode(',', $productString);
+		foreach($intArray as $p_id){ 
+		// Loop to retrieve and display data of every product within the order
+		$this->displayOrder($p_id);
+		}
+
+	
+	}
+
+	public function orderRetrievalError($uid, $orderid){
+		//Error handler to ensure authorized user access of orders
+		$sql = 'SELECT COUNT(*) AS count FROM ordr WHERE customerid = ? AND orderid = ?';
+		$stmt = $this->connect()->prepare($sql);
+		$stmt->execute([$uid, $orderid]);
+		$results = $stmt->fetch();
+		if ($results['count'] == 0) {
+			return true;
+		}
+		return	false;
+	}
+
+	public function displayOrder($p_id){
+		// Display product data
+		$sql = 'SELECT brand, p_name, c_sizes, price FROM product WHERE p_id = ?';
+		$stmt = $this->connect()->prepare($sql);
+		$stmt->execute([$p_id]);
+		$product = $stmt->fetch();
+		echo '<h3>'.$product['brand'].' - '.$product['p_name'].'('.$product['c_sizes'].')'.' <span>&emsp;$'.$product['price'].'</span></h3>';
+	}
 }
-
-
-
-
-
 
 
 
