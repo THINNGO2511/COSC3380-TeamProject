@@ -15,6 +15,9 @@ table {
   width: 100%;
   border: 2px solid black;
 }
+td {
+	text-align: center;
+}
 	
 div {
 border: 5px solid black;
@@ -33,7 +36,6 @@ margin:auto;
 <div style="width:30%;">
 <h1> Umaporium - Item Listings </h1>
 </div>
-
 <br>
 
 <div>
@@ -41,36 +43,30 @@ margin:auto;
 <form method="POST">
 	<label for="keyword">Keyword:</label>
 	<input type="text" id="keyword" name="keyword">
+	
+	<select name="sort-by">
+		<option value="">--Sort By--</option>
+		<option value="price-LowHi">Price: Low to High</option>
+		<option value="price-HiLow">Price: High to Low</option>
+		<option value="bestseller">Best Sellers</option>
+		<option value="new">Newest Arrivals</option>
+	</select>
 	<input type="submit" name="Search" class="button" value="Search" />
 </form>
-</div>
-
-<table>
-	<tr>
-		<th>Product_ID</th>
-		<th>Name</th>
-		<th>Color</th>
-		<th>Category</th>
-		<th>Description</th>
-		<th>Brand</th>
-		<th>Size</th>
-		<th>Price</th>
-		<th></th>
-	</tr>
-
+</div> <br>
 <?php
 error_reporting(0);
 $testObj = new Dbh();
 
 if($_POST['Search']){
 	$keyword = $_POST['keyword'];
-	$testObj->search($keyword);
+	$sort = $_POST['sort-by'];
+	$testObj->listings($keyword, $sort);
+
 } else {
 $testObj->listings();
 }
-
 ?>
 
-</table>
 </body>
 </html>
