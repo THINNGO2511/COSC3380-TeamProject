@@ -19,66 +19,109 @@ class Dbh {
         }
     }
 	
-	public function listings() {
-		$sql = 'SELECT * FROM product;';
-		$stmt = $this->connect()->query($sql);
-
-		while($row = $stmt->fetch()) {
-			echo '<tr>';
-			echo '<td>' . $row['p_id'] . '</th>';
-			echo '<td>' . $row['p_name'] . '</th>';
-			echo '<td>' . $row['color'] . '</th>';
-			echo '<td>' . $row['category'] . '</th>';
-			echo '<td>' . $row['description'] . '</th>';
-			echo '<td>' . $row['brand'] . '</th>';
-			echo '<td>' . $row['c_sizes'] . '</th>';
-			echo '<td>' . $row['price'] . '</th>';
-			echo '<td>';
-			echo '<form method="post">';
-			echo '<button name="atc" class="button" value='.$row['p_id'].' type="submit">Add to Cart</button>';
-			echo '</form>';
-			echo '</td>';
-			echo '</tr>';
+	public function buildListings() {?>
+		<table>
+		<tr>
+			<th>Product_ID</th>
+			<th>Name</th>
+			<th>Color</th>
+			<th>Category</th>
+			<th>Description</th>
+			<th>Brand</th>
+			<th>Size</th>
+			<th>Price</th>
+			<?php if (isset($_SESSION["userid"])){echo "<th></th>";}?>
 			
-				
-		}
-		if ($_POST['atc']){
-			$id = (int)$_POST['atc'];
-			$uid = (int)$_SESSION['userid'];
-			$stamt = $this->atc($id, $uid);
-		}
+		</tr>
+		<?php
 	}
 
-	public function search($keyword){
-		$sql = "SELECT * FROM product WHERE p_name LIKE '%$keyword%' or color LIKE '%$keyword%' or category LIKE '%$keyword%' or brand LIKE '%$keyword%'";
-
+	public function listings($keyword='', $sort='') {
+		$sql = "SELECT * FROM product";
+		$sql .= $this->search($keyword, $sort);
 		$stmt = $this->connect()->query($sql);
-		
+		$numResults = $stmt->rowCount();
 
-		while($row = $stmt->fetch()) {
+		if ($numResults == 0) {
+			echo '<h2 style="color:black;text-align:center">No Results...</h2>';
+		}
+
+		else
+		{	echo '<h2 style="color:grey;text-align:right;">'.$numResults.' results found.</h2><br>';
+
+			$this->buildListings();
+			while($row = $stmt->fetch()) {
+				$imgPath = '<img src="./product_img/pid_'.$row['p_id'].'.png" alt="'.$row['description'].'" style="width:100px;height:100px;">';
 			echo '<tr>';
 			echo '<td>' . $row['p_id'] . '</th>';
-			echo '<td>' . $row['p_name'] . '</th>';
+			echo '<td>' . $row['p_name'] .'<br>'.$imgPath. '</th>';
 			echo '<td>' . $row['color'] . '</th>';
 			echo '<td>' . $row['category'] . '</th>';
 			echo '<td>' . $row['description'] . '</th>';
 			echo '<td>' . $row['brand'] . '</th>';
 			echo '<td>' . $row['c_sizes'] . '</th>';
-			echo '<td>' . $row['price'] . '</th>';
-			echo '<td>';
-			echo '<form method="post">';
-			echo '<button name="atc" class="button" value='.$row['p_id'].' type="submit">Add to Cart</button>';
-			echo '</form>';
-			echo '</td>';
+			echo '<td>$' . $row['price'] . '</th>';
+			if (isset($_SESSION["userid"])) {
+				echo '<td>';
+				echo '<form method="post">';
+				echo '<button name="atc" class="button" value='.$row['p_id'].' type="submit">Add to Cart</button>';
+				echo '</form>';
+				echo '</td>';
+			}
 			echo '</tr>';	
+			}
+			echo '</table>';
+			if ($_POST['atc']){
+				$id = (int)$_POST['atc'];
+				$uid = (int)$_SESSION['userid'];
+				$this->atc($id, $uid);
+			}
 		}
-		if ($_POST['atc']){
-			$id = (int)$_POST['atc'];
-			$uid = (int)$_SESSION['userid'];
-			$stamt = $this->atc($id, $uid);
+		
+	}
+
+	public function search($keyword, $sort){
+		if ($keyword=='' && $sort=='') {
+			return '';
 		}
+		elseif ($keyword!='') {
+			$sql = " WHERE UPPER(p_name) LIKE UPPER('%$keyword%') or UPPER(color) LIKE UPPER('%$keyword%') or UPPER(category) LIKE UPPER('%$keyword%') or UPPER(brand) LIKE UPPER('%$keyword%')";
+			$sql .= $this->sortBy($sort);
+			}
+		else {
+			$sql = $this->sortBy($sort);
+		}
+		return $sql;
+	}
 
-
+	public function sortBy($sort) {
+		switch ($sort) {
+			case 'new':
+				$sql_str = " ORDER BY p_id DESC;";
+				break;
+			
+			case 'price-LowHi':
+				$sql_str = " ORDER BY price ASC;";
+				break;
+			
+			
+			case 'price-HiLow':
+				$sql_str = " ORDER BY price DESC;";
+				break;
+		
+			case 'bestseller':
+				// $sql_str = $conn->prepare("SELECT product.p_name, COUNT(*) AS quantity_sold
+				// FROM ordr
+				// INNER JOIN product ON product.p_id = ANY(ordr.p_id_list)
+				// GROUP BY product.p_id
+				// ORDER BY quantity_sold DESC
+				// break;
+			
+			default:
+				$sql_str = "";
+				break;
+		}
+		return $sql_str;
 	}
 
 	public function insertproduct($name, $color, $category, $subcategory, $description, $brand, $size, $price) {
@@ -124,17 +167,17 @@ class Dbh {
 		$stmt->execute([$keyword, $pid]);
 	}
 
-		public function displayCart($c_id){
-		$query = 'SELECT * FROM shoppingcart WHERE customerid = ?';
-		$stmt = $this->connect()->prepare($query);
-		$stmt->execute([$c_id]);
-		$Array = $stmt->fetch(PDO::FETCH_ASSOC);
-		$productString = substr($Array['p_id_list'], 1, -1);
-		$intArray = explode(',', $productString);
-		//foreach (array_combine($p_id, $quantity) as $p_id => $quantity) for when we have the quantities figured out fuck me 
-		foreach($intArray as $p_id){ 
-		$this->displayProduct($p_id);
-			}
+	public function displayCart($c_id){
+	$query = 'SELECT * FROM shoppingcart WHERE customerid = ?';
+	$stmt = $this->connect()->prepare($query);
+	$stmt->execute([$c_id]);
+	$Array = $stmt->fetch(PDO::FETCH_ASSOC);
+	$productString = substr($Array['p_id_list'], 1, -1);
+	$intArray = explode(',', $productString);
+	//foreach (array_combine($p_id, $quantity) as $p_id => $quantity) for when we have the quantities figured out fuck me 
+	foreach($intArray as $p_id){ 
+	$this->displayProduct($p_id);
+		}
 	}
 
 	public function displayProduct($p_id){
@@ -195,16 +238,18 @@ class Dbh {
 	}
 
 	public function displaylist() {
-		$sql = 'SELECT * FROM product ORDER BY p_id ASC LIMIT 5';
+		$sql = 'SELECT * FROM product ORDER BY p_id DESC LIMIT 5';
 		$stmt = $this->connect()->query($sql);
 
-		echo "<table style='margin-left:auto;margin-right:auto;width:100%;table-layout:fixed;border: 2px solid black';>";
+		echo "<table style='margin-left:auto;margin-right:auto;width:97%;table-layout:fixed;border: 2px solid black';>";
 
 		while($row = $stmt->fetch()) {
+			$imgPath = '<img src="./product_img/pid_'.$row['p_id'].'.png" alt="'.$row['description'].'" style="width:50px;height:50px;">';
 			echo '<tr style="margin-left:auto;margin-right:auto;width:100%;border: 2px solid black";>';
+			echo '<td style="margin-left:auto;margin-right:auto;width:51px;border: 2px solid black";>' . $imgPath . '</th>';
 			echo '<td style="margin-left:auto;margin-right:auto;width:100%;border: 2px solid black";>' . $row['p_name'] . '</th>';
 			echo '<td style="margin-left:auto;margin-right:auto;width:100%;border: 2px solid black";>' . $row['brand'] . '</th>';
-			echo '<td style="margin-left:auto;margin-right:auto;width:100%;border: 2px solid black";>' . $row['price'] . '</th>';
+			echo '<td style="margin-left:auto;margin-right:auto;width:100%;border: 2px solid black";>$' . $row['price'] . '</th>';
 			echo '</tr>';
 		}
 
@@ -271,9 +316,8 @@ class Dbh {
 		// Return the results
 		return $results;
 	}
+
 	
-	
-		
 	public function orderData($orderid){
 		// Retrieve some data about the order(date, status, total), stuff it into a key-value array, and return said array.
 		$sql = 'SELECT orderdate, orderstatus, price FROM ordr WHERE orderid = ?';
@@ -321,6 +365,7 @@ class Dbh {
 		echo '<h3>'.$product['brand'].' - '.$product['p_name'].'('.$product['c_sizes'].')'.' <span>&emsp;$'.$product['price'].'</span></h3>';
 	}
 }
+
 
 
 
