@@ -53,11 +53,12 @@ if (!isset($_SESSION["userid"])) {
 <div class="column3">
 <h2> View our latest items! </h2>
 <button class="glow-on-hover" type="button" onclick="window.location.href='listings.php'">Click for more!</button>
-<br><br><br>
+<br><br>
 <?php
 $TestObj2 = new Dbh();
 $TestObj2->displaylist();
 ?>
+<br>
 </div>
 
 <div class="column3">
