@@ -251,13 +251,12 @@ class Dbh {
 	}
 
 	public function cartTotal($c_id){
-		$query = 'SELECT * FROM shoppingcart WHERE customerid = ?';
+		$query = 'SELECT array_to_json(p_id_list) AS productlist FROM shoppingcart WHERE customerid = ?';
 		$quant = 'SELECT cart->? AS quantity FROM shoppingcart WHERE customerid = ?';
 		$stmt = $this->connect()->prepare($query);
 		$stmt->execute([$c_id]);
-		$Array = $stmt->fetch(PDO::FETCH_ASSOC);
-		$productString = substr($Array['p_id_list'], 1, -1);
-		$intArray = explode(',', $productString);
+		$prodArray = $stmt->fetch();
+		$intArray = json_decode($prodArray[0]);
 		$total = 0.00;
 		$stmt = $this->connect()->prepare($quant);
 		foreach($intArray as $p_id){
