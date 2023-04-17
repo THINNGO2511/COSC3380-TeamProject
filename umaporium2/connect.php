@@ -203,7 +203,7 @@ class Dbh {
 		$productString = substr($Array['p_id_list'], 1, -1);
 		$intArray = explode(',', $productString);
 		foreach($intArray as $p_id){ 
-			if(is_int($p_id)){
+			if(is_int(intval($p_id))){
 			$this->displayProductForOrder($p_id, $c_id);
 			}
 		}
