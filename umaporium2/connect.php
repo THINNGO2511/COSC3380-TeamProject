@@ -168,18 +168,58 @@ class Dbh {
 	}
 
 	public function displayCart($c_id){
-	$query = 'SELECT * FROM shoppingcart WHERE customerid = ?';
-	$stmt = $this->connect()->prepare($query);
-	$stmt->execute([$c_id]);
-	$Array = $stmt->fetch(PDO::FETCH_ASSOC);
-	$productString = substr($Array['p_id_list'], 1, -1);
-	$intArray = explode(',', $productString);
-	//foreach (array_combine($p_id, $quantity) as $p_id => $quantity) for when we have the quantities figured out fuck me 
-	foreach($intArray as $p_id){ 
-	$this->displayProduct($p_id);
+		$query = 'SELECT * FROM shoppingcart WHERE customerid = ?';
+		$stmt = $this->connect()->prepare($query);
+		$stmt->execute([$c_id]);
+		$Array = $stmt->fetch(PDO::FETCH_ASSOC);
+		$productString = substr($Array['p_id_list'], 1, -1);
+		$intArray = explode(',', $productString);
+		$_SESSION['cartArray'] = $intArray;
+		?>
+		<form action="cart.php" method="post" id = "cart">
+		<?php foreach($intArray as $p_id){ ?> 
+				<label for="quantity">Quantity:</label>
+				<select id=	"<?php echo $p_id;?>" name="<?php echo $p_id;?>">  
+				<option value="1" selected> 1 </option>
+				<option value="2"> 2 </option>
+				<option value="3"> 3 </option>
+				<option value="4"> 4 </option>
+				<option value="5"> 5 </option>
+				</select>
+			<?php $this->displayProduct($p_id);
+		}
+		?>
+
+		<button name="submit" class="btn" type="submit">Checkout</button>
+		</form>
+		<?php
+	}
+	
+	public function displayOrder($c_id){
+		$query = 'SELECT * FROM shoppingcart WHERE customerid = ?';
+		$stmt = $this->connect()->prepare($query);
+		$stmt->execute([$c_id]);
+		$Array = $stmt->fetch(PDO::FETCH_ASSOC);
+		$productString = substr($Array['p_id_list'], 1, -1);
+		$intArray = explode(',', $productString);
+		foreach($intArray as $p_id){ 
+			$this->displayProductForOrder($p_id, $c_id);
 		}
 	}
-
+	public function addQuantity($cart){
+		$query2 = "('";
+		$last = end($cart);
+		foreach($cart as $p_id){
+			$quantity = $_POST[$p_id];
+			if($p_id == $last){$query2 .= '"'.$p_id.'"=>"'.$quantity.'"'; }
+			else{$query2 .= '"'.$p_id.'"=>"'.$quantity.'",'; } 
+			$query = "UPDATE shoppingcart SET cart ="; 
+			$query3 = "') WHERE customerid = ? ";
+			$stmt = $this->connect()->prepare($query.$query2.$query3);
+			$stmt->execute([$_SESSION["userid"]]);
+		}
+	}
+	
 	public function displayProduct($p_id){
 		$sql = 'SELECT p_name, price FROM product WHERE p_id = ?';
 		$stmt = $this->connect()->prepare($sql);
@@ -187,7 +227,22 @@ class Dbh {
 		$product = $stmt->fetch();
 		echo '<p><a>'.$product['p_name'].'</a> <span class ="price">'.$product['price'].'</span></p>';
 	}
-
+	
+	public function displayProductForOrder($p_id, $c_id){
+		$sql = 'SELECT * FROM product WHERE p_id = ?';
+		$quant = 'SELECT cart->? AS quantity FROM shoppingcart WHERE customerid = ?';
+    		$stmt = $this->connect()->prepare($sql);
+		$stmt = $this->connect()->prepare($sql);
+		$stmt->execute([$p_id]);
+		$product = $stmt->fetch();
+		$stmt = $this->connect()->prepare($quant);
+		$stmt->execute([$p_id, $c_id]);
+		$quantity = $stmt->fetch();
+		echo '<p><a style="display: inline-block;"> '.$quantity['quantity'].' x '.$product['p_name'].'</a> <span class ="price">'.$product['price'].'</span><br>';
+		$itemsPrice = $quantity['quantity'] * $product['price'];
+		echo '<span style="display: block; margin-top: 5px;">Items Total: '.number_format($itemsPrice, 2, '.', '').'</span></p>';
+	}
+	
 	public function cartCount($c_id){
 		$sql = 'SELECT ARRAY_LENGTH(p_id_list, 1) FROM shoppingcart WHERE customerid = ?';
 		$stmt = $this->connect()->prepare($sql);
@@ -198,15 +253,19 @@ class Dbh {
 
 	public function cartTotal($c_id){
 		$query = 'SELECT * FROM shoppingcart WHERE customerid = ?';
+		$quant = 'SELECT cart->? AS quantity FROM shoppingcart WHERE customerid = ?';
 		$stmt = $this->connect()->prepare($query);
 		$stmt->execute([$c_id]);
 		$Array = $stmt->fetch(PDO::FETCH_ASSOC);
 		$productString = substr($Array['p_id_list'], 1, -1);
 		$intArray = explode(',', $productString);
 		$total = 0.00;
+		$stmt = $this->connect()->prepare($quant);
 		foreach($intArray as $p_id){
-		$total += $this->itemPrice($p_id);
-			}
+			$stmt->execute([$p_id, $c_id]);
+			$quantity = $stmt->fetch();
+			$total += $this->itemPrice($p_id) * intval($quantity['quantity']);
+		}
 		return $total;
 	}
 
