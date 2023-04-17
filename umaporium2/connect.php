@@ -196,18 +196,16 @@ class Dbh {
 	}
 	
 	public function displayOrder($c_id){
-		$query = 'SELECT * FROM shoppingcart WHERE customerid = ?';
+		$query = 'SELECT array_to_json(p_id_list) AS productlist FROM shoppingcart WHERE customerid = ?';
 		$stmt = $this->connect()->prepare($query);
 		$stmt->execute([$c_id]);
-		$Array = $stmt->fetch(PDO::FETCH_ASSOC);
-		$productString = substr($Array['p_id_list'], 1, -1);
-		$intArray = explode(',', $productString);
+		$prodArray = $stmt->fetch();
+		$intArray = json_decode($prodArray[0]);
 		foreach($intArray as $p_id){ 
-			if(is_int(intval($p_id))){
 			$this->displayProductForOrder($p_id, $c_id);
-			}
 		}
 	}
+	
 	public function addQuantity($cart){
 		$query2 = "('";
 		$last = end($cart);
