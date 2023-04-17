@@ -23,7 +23,7 @@ $dbh = new Dbh();
 						<b><?php $dbh->cartCount($_SESSION["userid"]); ?></b>
 					</span>
 					</h4>
-				<?php $dbh->displayCart($_SESSION["userid"]); ?> 
+				<?php $dbh->displayOrder($_SESSION["userid"]); ?> 
 				<hr>
 				<p>Sub-total <span class = "price" style ="color:black"><b>$ <?php echo number_format($dbh->cartTotal($_SESSION["userid"]), 2, '.', '') ?></b></span></p>
 				<?php 
