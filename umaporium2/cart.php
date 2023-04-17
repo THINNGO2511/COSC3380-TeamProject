@@ -3,18 +3,6 @@ session_start();
 require_once(__DIR__ . '/connect.php');
 $dbh = new Dbh();
 $itemCount = $dbh->cartCount($_SESSION["userid"]);
-if(!empty($_POST['97'])){
-	echo 'PLEASE FOR GODS SAKE PLEASE WORK FOR ONCE';
-	$_POST['97'];
-}
-
-if(isset($_POST['submit'])){
-	$cart = $_SESSION['cartArray'];
-
-	$dbh->addQuantity($cart);
-	header("Location: order.php");
-  	exit();
-	}
 ?>
 
 <html>
@@ -38,8 +26,19 @@ if(isset($_POST['submit'])){
 				<?php
                 if($itemCount > 0) {
                     $dbh->displayCart($_SESSION["userid"]); ?> 
+				<hr>
+				<p>Sub-total <span class = "price" style ="color:black"><b>$ <?php echo number_format($dbh->cartTotal($_SESSION["userid"]), 2, '.', '') ?></b></span></p>
+				<?php 
+				$pre = $dbh->cartTotal($_SESSION["userid"]);
+				$tax = $pre * .0725;	
+				?>
+				<p>Tax <span class = "price" style ="color:black"><b>$ <?php echo number_format($tax, 2, '.', '') ?></b>
+				<p>Total <span class = "price" style ="color:black"><b>$ <?php $total = $pre + $tax; echo number_format($total, 2, '.', '') ?></b>
+
+				
                 </div>
-			
+				
+                <button class="btn" type="button" onclick="window.location.href='order.php'">Checkout</button>
                 <br><br><br>
                 <?php
                 if(isset($_POST["empty-cart"])) {
@@ -49,7 +48,7 @@ if(isset($_POST['submit'])){
                 <div style="text-align:left">
                 <form method="post">
                 <input type="submit" value="Empty Cart" name ="empty-cart"> 
-                </form>    
+                </form>
                 </div>
                 <?php }
                 else { ?> 
@@ -59,6 +58,5 @@ if(isset($_POST['submit'])){
 			</div>
 		</div>
 	</body>
-	
 			
 </html>
