@@ -395,7 +395,7 @@ class Dbh {
 		$intArray = explode(',', $productString);
 		foreach($intArray as $p_id){ 
 		// Loop to retrieve and display data of every product within the order
-		$this->displayOrder($p_id);
+		$this->displayOrderData($p_id);
 		}
 
 	
@@ -413,7 +413,7 @@ class Dbh {
 		return	false;
 	}
 
-	public function displayOrder($p_id){
+	public function displayOrderData($p_id){
 		// Display product data
 		$sql = 'SELECT brand, p_name, c_sizes, price FROM product WHERE p_id = ?';
 		$stmt = $this->connect()->prepare($sql);
