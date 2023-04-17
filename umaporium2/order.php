@@ -32,26 +32,30 @@ $dbh = new Dbh();
 				?>
 				<p>Tax <span class = "price" style ="color:black"><b>$ <?php echo number_format($tax, 2, '.', '') ?></b>
 				<p>Total <span class = "price" style ="color:black"><b>$ <?php $total = $pre + $tax; echo number_format($total, 2, '.', '') ?></b>
-				<form method = "post">
-				<input type="submit" value="Confirm Order" class="btn" name = "submission">
-				</form>
-				<?php
+
+					<?php
 					if(isset($_POST['submission'])){
 						$status = $dbh->insertOrder($_SESSION["userid"], number_format($total, 2, '.', ''));
 						if($status == true){
-							echo 'Order Successful :D </br>'; 
-							echo 'Thanks for Shopping at THE Umaporium!';
+							echo '<p> Order Successful :D </br>'; 
+							echo 'Thanks for Shopping at THE Umaporium!</p>';
 				?>
 							<form action="index.php" method="post">
   							<input type="submit" value="Back to Home" name= "Back to Home">
 							</form> 
 				<?php
+							exit();
 						}
 						else{
 							echo 'Order Failed :<';
 						}
 					} 
 				?>
+
+				<form method = "post">
+				<input type="submit" value="Confirm Order" class="btn" name = "submission">
+				</form>
+				
 				</div>
 			</div>
 		</div>
