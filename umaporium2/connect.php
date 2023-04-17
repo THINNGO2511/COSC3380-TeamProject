@@ -203,7 +203,9 @@ class Dbh {
 		$productString = substr($Array['p_id_list'], 1, -1);
 		$intArray = explode(',', $productString);
 		foreach($intArray as $p_id){ 
+			if(is_int($p_id)){
 			$this->displayProductForOrder($p_id, $c_id);
+			}
 		}
 	}
 	public function addQuantity($cart){
@@ -231,7 +233,6 @@ class Dbh {
 	public function displayProductForOrder($p_id, $c_id){
 		$sql = 'SELECT * FROM product WHERE p_id = ?';
 		$quant = 'SELECT cart->? AS quantity FROM shoppingcart WHERE customerid = ?';
-    		$stmt = $this->connect()->prepare($sql);
 		$stmt = $this->connect()->prepare($sql);
 		$stmt->execute([$p_id]);
 		$product = $stmt->fetch();
