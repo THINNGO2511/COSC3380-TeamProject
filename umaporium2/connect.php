@@ -124,12 +124,46 @@ class Dbh {
 		return $sql_str;
 	}
 
-	public function insertproduct($name, $color, $category, $subcategory, $description, $brand, $size, $price) {
+	public function categoryOpt() {
+		$query = "SELECT DISTINCT category FROM product ORDER BY category;";
+		$stmt = $this->connect()->query($query);
+
+		while($row = $stmt->fetch()) {
+			echo '<option value="'.$row["category"].'">';
+		}
+	}
+
+	public function brandOpt() {
+		$query = "SELECT DISTINCT brand FROM product ORDER BY brand;";
+		$stmt = $this->connect()->query($query);
+
+		while($row = $stmt->fetch()) {
+			echo '<option value="'.$row["brand"].'">';
+		}
+	}
+
+    public function colorOpt() {
+		$query = "SELECT DISTINCT color FROM product ORDER BY color;";
+		$stmt = $this->connect()->query($query);
+
+		while($row = $stmt->fetch()) {
+			echo '<option value="'.$row["color"].'">';
+		}
+	}
+
+	public function insertProduct($name, $color, $category, $subcategory, $description, $brand, $size, $price) {
 		$sql = 'INSERT INTO product(p_name, color, category, subcategory, description, brand, c_sizes, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?);';
 
 		$stmt = $this->connect()->prepare($sql);
 		$stmt->execute([$name, $color, $category, $subcategory, $description, $brand, $size, $price]);
 
+	}
+
+	public function getNextPID() {
+		$query = "SELECT MAX(p_id) FROM product;";
+		$stmt = $this->connect()->query($query);
+		$p_id = $stmt->fetch()['max'];
+		return $p_id+1;
 	}
 
 	public function viewinventory() {
