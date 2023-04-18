@@ -38,7 +38,7 @@ class Dbh {
 	}
 
 	public function listings($keyword='', $sort='') {
-		if ($sort == 'bestsellers') {
+		if ($sort == 'bestseller') {
 			$sql = 'SELECT product.*
 			FROM product
 			INNER JOIN (
