@@ -39,18 +39,6 @@ if(isset($_POST['Submit'])) {
 
     if($_GET['function']=='edit'){// for item edit page
         
-        //first we rename and upload the image to it's appropriate destination
-        $file = $_FILES['imagefile'];
-        if(isset($file)){
-            $fileTmpName = $file['tmp_name'];
-
-            $pid = $dbh->getNextPID();
-            $fileNewName = "pid_$pid.png";
-            $fileDestination = "product_img/$fileNewName";
-            move_uploaded_file($fileTmpName, $fileDestination);
-        }
-        
-
         $pid = $_POST['pid'];
         $name = $_POST['pname'];
         $description = $_POST['pdesc'];
@@ -60,6 +48,17 @@ if(isset($_POST['Submit'])) {
         $size = $_POST['size'];
         $color =  $_POST['pcolor'];
         $price = $_POST['price'];
+
+        //first we rename and upload the image to it's appropriate destination
+        $file = $_FILES['imagefile'];
+        if($file['error']!=4){
+            $fileTmpName = $file['tmp_name'];
+
+            $fileNewName = "pid_$pid.png";
+            $fileDestination = "product_img/$fileNewName";
+            move_uploaded_file($fileTmpName, $fileDestination);
+        }
+        
 
         if (!empty($name)) {
             $dbh->itemedit('p_name', $name, $pid);
