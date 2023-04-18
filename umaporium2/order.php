@@ -12,7 +12,7 @@ $dbh = new Dbh();
 	<body>
 		<h4><a href="./index.php"> < Back to homepage</a> &emsp; <a href="./cart.php"> < Shopping Cart</a></h4>
 		<div style="text-align:center">
-		<h1> Umaporium - Checkout </h1>
+		<h1> Cougarporium - Checkout </h1>
 		</div>
 		<div class ="row">
 			<div class="box">
@@ -38,7 +38,7 @@ $dbh = new Dbh();
 						$status = $dbh->insertOrder($_SESSION["userid"], number_format($total, 2, '.', ''));
 						if($status == true){
 							echo '<p> Order Successful :D </br>'; 
-							echo 'Thanks for Shopping at THE Umaporium!</p>';
+							echo 'Thanks for Shopping at THE Cougarporium!</p>';
 				?>
 							<form action="index.php" method="post">
   							<input type="submit" value="Back to Home" name= "Back to Home">
