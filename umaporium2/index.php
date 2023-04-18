@@ -7,7 +7,7 @@ include 'connect.php';
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Umaporium - Home</title>
+    <title>Cougarporium - Home</title>
     <link rel="stylesheet" href="styles.css">
 	
 <style>
@@ -41,7 +41,7 @@ margin:auto;
 
 <?php
 if (!isset($_SESSION["userid"])) {
-	echo "<h1>Welcome to the Umaporium!</h1>";
+	echo "<h1>Welcome to the Cougarporium!</h1>";
 } else {
 	$uid = $_SESSION["userid"];
 	$TestObj = new Dbh();
@@ -71,7 +71,7 @@ $TestObj2->displaylist();
   }
   ?>
   <br><br>
-  <img src="cart.png" alt="Icon of a shopping cart." style="margin-left:18%;width:60%;height:40%;">
+  <img src="cougar.png" alt="Icon of a shopping cart." style="margin-left:18%;width:60%;height:40%;">
 </div>
 
 <div class="column3">
@@ -84,10 +84,21 @@ $TestObj2->displaylist();
 
 <h2> Click one of the options above, or use our Navigation Bar up top for more! </h2>
 </main>
+
+<!-- <footer>
+  <nav>
+    <p style="color:#fff";> A Team 8 Project. Copyrighted COSC 3380, UH, 2023. </p>
+  </nav>
+</footer> -->
+
 <footer>
-<nav>
-        <p style="color:#ADD8E6";> A Team 8 Project. Copyrighted COSC 3380, UH, 2023. </p>
-</nav>
+  <nav>
+    <p style="color:#fff;">
+      <a href="https://github.com/THINNGO2511/COSC3380-TeamProject" target="_blank" class="team-link">A Team 8 Project</a>. Copyrighted COSC 3380, UH, 2023.
+    </p>
+  </nav>
 </footer>
+
+
 </body>
 </html>
