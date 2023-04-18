@@ -22,7 +22,7 @@
 </div><br>
 
 <ul>
-<form name="insert" action="itemedit.php" method="POST" >
+<form name="insert" action="invedit.php" method="POST" >
 	<li>Product ID</li><li><input type="text" name="pid" /></li>
 	<li>Threshold:</li><li><input type="text" name="threshold" /></li>
 	<li>Stock:</li><li><input type="text" name="stock" /></li>
