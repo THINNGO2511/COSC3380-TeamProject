@@ -17,29 +17,21 @@
       <option value="demographics">Demographics</option>
     </select>
     <div id="date-fields">
-  <label for="start_date">Start Date:</label>
-  <input type="date" name="start_date">
-  <label for="end_date">End Date:</label>
-  <input type="date" name="end_date">
-</div>
-<div id = "hint">Please select dates or leave them blank for all time</div>
-
- <!--   <div id="category-field" style="display:none;">
-      <label for="category">Category:</label>
-      <select name="category" id="category">
-        <option value="">All Categories</option>
-        <option value="Shirt">Shirt</option>
-        <option value="Jacket">Jacket</option>
-        <option value="Pants">Pants</option>
-        <option value="Shorts">Shorts</option>
-      </select>
-    </div> -->
+      <label for="start_date">Start Date:</label>
+      <input type="date" name="start_date">
+      <label for="end_date">End Date:</label>
+      <input type="date" name="end_date">
+    </div>
+   
+    <div id="hint">Please select dates or leave them blank for all time</div>
     <button type="submit">Run Report</button>
-    <br>
   </form>
-  
+  <script>
+    document.getElementById("report").addEventListener("change", toggleDateFields);
+  </script>
 </body>
 </html>
+
 
 
 
