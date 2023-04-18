@@ -18,7 +18,7 @@ table {
 </head>
 <body>
 <div class="title">
-<h1> Umaporium - View Inventory </h1>
+<h1> Cougarporium - View Inventory </h1>
 </div>
 
 <br>
@@ -35,7 +35,6 @@ table {
 	<tr>
 		<th>Item Threshold</th>
 		<th>Brand</th>
-		<th>Clothing Line</th>
 		<th>Product ID</th>
 		<th>Stock</th>
 	</tr>

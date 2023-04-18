@@ -26,7 +26,8 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
 
 
 // Get the user's order history from the orders table
-$query = "SELECT * FROM ordr WHERE customerid = ?";
+$query = "SELECT * FROM ordr WHERE customerid = ?
+ORDER BY orderid DESC"; 
 $stmt = $conn->prepare($query);
 $stmt->execute(array($_SESSION["userid"]));
 $orderHistory = $stmt->fetchAll(PDO::FETCH_ASSOC);
