@@ -35,7 +35,6 @@ table {
 	<tr>
 		<th>Item Threshold</th>
 		<th>Brand</th>
-		<th>Clothing Line</th>
 		<th>Product ID</th>
 		<th>Stock</th>
 	</tr>

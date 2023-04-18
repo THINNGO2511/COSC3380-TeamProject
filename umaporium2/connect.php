@@ -175,7 +175,6 @@ class Dbh {
 			echo '<tr>';
 			echo '<td>' . $row['itemthreshold'] . '</th>';
 			echo '<td>' . $row['brand'] . '</th>';
-			echo '<td>' . $row['clothingline'] . '</th>';
 			echo '<td>' . $row['productid'] . '</th>';
 			echo '<td>' . $row['o_stock'] . '</th>';
 			echo '</tr>';

@@ -7,6 +7,7 @@
 </head>
 <body>
   <h1>Reports</h1>
+  <button class="back-button" onclick="window.location.href='staffportal.php'">Back</button>
   <form method="GET" action="reports.php">
     <label for="report">Select a report to run:</label>
     <select name="report" id="report" onchange="toggleDateFields()">
@@ -36,6 +37,7 @@
     <button type="submit">Run Report</button>
     <br>
   </form>
+  
 </body>
 </html>
 
