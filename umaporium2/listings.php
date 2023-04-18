@@ -3,10 +3,10 @@
 	include 'connect.php';
 ?>
 
-
 <html>
 <head>
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script">
 <title>Browse Items</title>
 <style>
 table {
@@ -33,40 +33,48 @@ margin:auto;
   <?php include('./includes/navbar.php');?>
   </nav>
 </header>	
-<div style="width:30%;">
-<h1> Umaporium - Item Listings </h1>
-</div>
+
+<h1 style="font-size: 60px; font-family:'Dancing Script'"> Cougarporium </h1>
+<h1 style="font-size: 23px"> - Item Listings - </h1>
 <br>
 
-<div>
+<!-- <div style="width: 50%; border-radius: 24px; align-items: center"> -->
+<div style="width: 50%; border-radius: 24px; display: flex; justify-content: center; align-items: center; flex-direction: column;">
 <h3 style="color:black;text-align:center"> Enter a search term </h3><br>
-<form method="POST">
-	<label for="keyword">Keyword:</label>
-	<input type="text" id="keyword" name="keyword">
-	
-	<select name="sort-by">
-		<option value="">--Sort By--</option>
-		<option value="price-LowHi">Price: Low to High</option>
-		<option value="price-HiLow">Price: High to Low</option>
-		<option value="bestseller">Best Sellers</option>
-		<option value="new">Newest Arrivals</option>
-	</select>
-	<input type="submit" name="Search" class="button" value="Search" />
-</form>
-</div> <br>
+	<form method="POST">
+		<label for="keyword">Keyword:</label>
+		<input type="text" id="keyword" name="keyword">
+		
+		<select name="sort-by">
+			<option value="">--Sort By--</option>
+			<option value="price-LowHi">Price: Low to High</option>
+			<option value="price-HiLow">Price: High to Low</option>
+			<option value="bestseller">Best Sellers</option>
+			<option value="new">Newest Arrivals</option>
+		</select>
+		<input type="submit" name="Search" class="button" value="Search" />
+	</form>
+</div> 
+
+<br>
+
 <?php
 error_reporting(0);
 $testObj = new Dbh();
 
-if($_POST['Search']){
-	$keyword = $_POST['keyword'];
-	$sort = $_POST['sort-by'];
-	$testObj->listings($keyword, $sort);
-
+if ($_POST['Search']) {
+    $keyword = $_POST['keyword'];
+    $sort = $_POST['sort-by'];
+    echo '<div style="background-color: white; border-radius: 24px">';
+    $testObj->listings($keyword, $sort);
+    echo '</div>';
 } else {
-$testObj->listings();
+    echo '<div style="background-color: white; border-radius: 24px">';
+    $testObj->listings();
+    echo '</div>';
 }
 ?>
+
 
 </body>
 </html>

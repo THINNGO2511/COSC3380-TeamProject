@@ -10,8 +10,7 @@
    
     /* Set the gradient background */
     body {
-    /* background: #f75353; */
-    background: #d88980;
+    background: linear-gradient(#f0c1a2, #d88980);
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
