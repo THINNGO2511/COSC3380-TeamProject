@@ -38,10 +38,28 @@ class Dbh {
 	}
 
 	public function listings($keyword='', $sort='') {
-		$sql = "SELECT * FROM product";
-		$sql .= $this->search($keyword, $sort);
-		$stmt = $this->connect()->query($sql);
-		$numResults = $stmt->rowCount();
+		if ($sort == 'bestsellers') {
+			$sql = 'SELECT product.*
+			FROM product
+			INNER JOIN (
+			  SELECT p_id, COUNT(*) AS quantity_sold
+			  FROM ordr
+			  INNER JOIN product ON product.p_id = ANY(ordr.p_id_list)
+			  GROUP BY p_id
+			  ORDER BY quantity_sold DESC
+			  LIMIT 10 -- change this to adjust the number of best-selling products to retrieve
+			) AS best_sellers ON product.p_id = best_sellers.p_id
+			ORDER BY best_sellers.quantity_sold DESC';
+		}
+		else {
+			$sql = "SELECT * FROM product";
+			$sql .= $this->search($keyword, $sort);
+			
+		}
+		    $stmt = $this->connect()->query($sql);
+			$numResults = $stmt->rowCount();
+
+		
 
 		if ($numResults == 0) {
 			echo '<h2 style="color:black;text-align:center">No Results...</h2>';
@@ -92,6 +110,7 @@ class Dbh {
 		else {
 			$sql = $this->sortBy($sort);
 		}
+		
 		return $sql;
 	}
 
@@ -111,12 +130,11 @@ class Dbh {
 				break;
 		
 			case 'bestseller':
-				// $sql_str = $conn->prepare("SELECT product.p_name, COUNT(*) AS quantity_sold
-				// FROM ordr
-				// INNER JOIN product ON product.p_id = ANY(ordr.p_id_list)
-				// GROUP BY product.p_id
-				// ORDER BY quantity_sold DESC
-				// break;
+				 $sql_str = " SELECT product.p_name, COUNT(*) AS quantity_sold FROM ordr
+				 INNER JOIN product ON product.p_id = ANY(ordr.p_id_list)
+				 GROUP BY product.p_id
+				 ORDER BY quantity_sold DESC;";
+				 break;
 			
 			default:
 				$sql_str = "";
