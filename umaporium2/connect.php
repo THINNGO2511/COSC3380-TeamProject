@@ -2,6 +2,7 @@
 
 class Dbh {
 
+	
 	protected function connect() {
         // Database credentials
         $host = "team8uma.postgres.database.azure.com";
@@ -324,7 +325,7 @@ class Dbh {
 		$sql = $sql1.$uid;
 		$stmt = $this->connect()->query($sql);
 		while ($row = $stmt->fetch()) {
-			echo '<h1>Welcome to the Umaporium, ' . $row['namefirst'] . '!</h1>';
+			echo '<h1>Welcome to the Cougarporium, ' . $row['namefirst'] . '!</h1>';
 		}
 	}
 
