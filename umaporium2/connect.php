@@ -332,36 +332,69 @@ class Dbh {
 	}
 
 
-	public function run_report($report, $start_date, $end_date)  {
+	public function run_report($report, $start_date = null, $end_date = null, $category = null) {
 		// Connect to the database
 		$conn = $this->connect();
+	
 		// Run the appropriate query based on the report name
 		switch ($report) {
 			case 'sales':
-				$stmt = $conn->prepare("SELECT * FROM ordr WHERE orderdate BETWEEN :start_date AND :end_date");
+				$sql = "SELECT * FROM ordr";
+				if ($start_date && $end_date) {
+					$sql .= " WHERE orderdate BETWEEN :start_date AND :end_date";
+				}
+				$stmt = $conn->prepare($sql);
+				if ($start_date && $end_date) {
+					$stmt->bindParam(':start_date', $start_date);
+					$stmt->bindParam(':end_date', $end_date);
+				}
 				break;
-			case 'best_sellers':
-				$stmt = $conn->prepare("SELECT product.p_name, COUNT(*) AS quantity_sold
-										FROM ordr
-										INNER JOIN product ON product.p_id = ANY(ordr.p_id_list)
-										WHERE orderdate BETWEEN :start_date AND :end_date
-										GROUP BY product.p_id
-										ORDER BY quantity_sold DESC");
-				break;
+				case 'best_sellers':
+					$sql = "SELECT product.p_name, COUNT(*) AS quantity_sold, SUM(product.price) AS total_sales
+							FROM ordr
+							INNER JOIN product ON product.p_id = ANY(ordr.p_id_list)";
+					if ($start_date && $end_date) {
+						$sql .= " WHERE orderdate BETWEEN :start_date AND :end_date";
+					}
+					$sql .= " GROUP BY product.p_id ORDER BY quantity_sold DESC";
+					$stmt = $conn->prepare($sql);
+					if ($start_date && $end_date) {
+						$stmt->bindParam(':start_date', $start_date);
+						$stmt->bindParam(':end_date', $end_date);
+					}
+					break;
+				
 			case 'best_categories':
-				$stmt = $conn->prepare("SELECT product.category, COUNT(*) AS quantity_sold
-										FROM ordr
-										INNER JOIN product ON product.p_id = ANY(ordr.p_id_list)
-										WHERE orderdate BETWEEN :start_date AND :end_date
-										GROUP BY product.category
-										ORDER BY quantity_sold DESC");
+				$sql = "SELECT product.category, COUNT(*) AS quantity_sold
+						FROM ordr
+						INNER JOIN product ON product.p_id = ANY(ordr.p_id_list)";
+				if ($start_date && $end_date) {
+					$sql .= " WHERE orderdate BETWEEN :start_date AND :end_date";
+				}
+				$sql .= " GROUP BY product.category ORDER BY quantity_sold DESC";
+				$stmt = $conn->prepare($sql);
+				if ($start_date && $end_date) {
+					$stmt->bindParam(':start_date', $start_date);
+					$stmt->bindParam(':end_date', $end_date);
+				}
 				break;
+				case 'demographics':
+					$stmt = $conn->prepare("SELECT 
+					COUNT(DISTINCT customerid) AS total_customers,
+					COUNT(DISTINCT CASE WHEN age BETWEEN 18 AND 24 THEN customerid END) AS age_18_24,
+					COUNT(DISTINCT CASE WHEN age BETWEEN 25 AND 34 THEN customerid END) AS age_25_34,
+					COUNT(DISTINCT CASE WHEN age BETWEEN 35 AND 44 THEN customerid END) AS age_35_44,
+					COUNT(DISTINCT CASE WHEN age BETWEEN 45 AND 54 THEN customerid END) AS age_45_54,
+					COUNT(DISTINCT CASE WHEN age >= 55 THEN customerid END) AS age_55_and_over
+				FROM 
+					customer
+				");
+				
+					break;
 			default:
 				die("Invalid report selected.");
 		}
-		// Bind the parameters
-		$stmt->bindParam(':start_date', $start_date);
-		$stmt->bindParam(':end_date', $end_date);
+		
 		// Execute the query and fetch the results as an array of associative arrays
 		$stmt->execute();
 		$results = $stmt->fetchAll(PDO::FETCH_ASSOC);

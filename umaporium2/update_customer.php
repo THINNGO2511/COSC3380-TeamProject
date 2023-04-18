@@ -13,10 +13,12 @@ if (isset($_POST['submit'])) {
     $lastname = $_POST['lastname'];
     $address = $_POST['address'];
     $phone = $_POST['phone'];
+    $age = $_POST['age'];
 
-    $query = "UPDATE customer SET namefirst = ?, namelast = ?, address = ?, phonenumber = ? WHERE customerid = ?";
+
+    $query = "UPDATE customer SET namefirst = ?, namelast = ?, address = ?, phonenumber = ?, age = ? WHERE customerid = ?";
     $stmt = $conn->prepare($query);
-    $stmt->execute(array($firstname, $lastname, $address, $phone, $_SESSION["userid"]));
+    $stmt->execute(array($firstname, $lastname, $address, $phone, $age, $_SESSION["userid"]));
     
     // Redirect back to account.php after updating the information and include success flag
     header("Location: account.php?success=1");

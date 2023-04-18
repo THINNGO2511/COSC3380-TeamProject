@@ -55,6 +55,8 @@ $orderHistory = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <input type="text" id="address" name="address" value="<?php echo $userInfo['address']; ?>"><br>
             <label for="phone">Phone:</label>
             <input type="text" id="phone" name="phone" value="<?php echo $userInfo['phonenumber']; ?>"><br>
+            <label for="age">Age:</label>
+            <input type="text" id="age" name="age" value="<?php echo $userInfo['age']; ?>"><br>
             <input type="submit", name="submit", value="Update">
         </form>
 
