@@ -1,6 +1,13 @@
+<?php 
+error_reporting(0);
+include "connect.php";
+$testObj = new Dbh();
+?>
+
 <html>
 <head>
 <link rel="stylesheet" href="styles.css">
+<title>Admin: Add Item</title>
 </head>
 <body>
 <div class="title;">
@@ -10,57 +17,106 @@
 <br>
 
 <div class="title">
-<form action="staffportal.php">
-	<button style="height:10%;width:100%"> Return to Staff Portal </button>
-</form>
+<button style="height:10%;width:100%" onclick="window.location.href='staffportal.php'"> Return to Staff Portal </button>
 </div>
 
 <br>
 
-<p> Use the form below to add items to the database. </p>
+<?php
+if($_GET['upload']=='success') {
+	echo "<h2 style='color:green; text-align:center;'>Item added successfully!</h2>";
+}
+?>
 
-<ul>
-<form name="insert" action="itemadd.php" method="POST" >
-	<li>Product Name</li><li><input type="text" name="pname" /></li>
-	<li>Product Color:</li><li><input type="text" name="pcolor" /></li>
-	<li>Product Description (optional):</li><li><input type="text" name="pdesc" /></li>
-	<li>Product Category:</li><li><input type="text" name="pcategory" /></li>
-	<li>Sub-category (optional):</li><li><input type="text" name="psubcat" /></li>
-	<li>Brand:</li><li><input type="text" name="pbrand" /></li>
-	<li>Size:</li><li><input type="text" name="csizes" /></li>
-	<li>Price:</li><li><input type="text" name="price" /></li>
-	<li><input type="submit" /></li>
+<p> Use the form below to add a new item to the database. </p>
+<div style="padding-left:1.5em;">
+<div style="padding-left:1em; font-size: 1.5em; border-style:groove; width:60%;">
+
+<form method="POST" action="upload.php?function=add" enctype="multipart/form-data">
+	<div style="padding: 1em; padding-bottom:0em">
+	<label for="pname">Product Name:</label>
+	<input type="text" name="pname" required/>
+	<br>
+	</div>
+
+	<div style="padding: 1em; padding-bottom:0em">
+	<label for="pdesc">Product Description (optional):</label>
+	<input type="text" name="pdesc"/>
+	<br>
+	</div>
+
+	<div style="padding: 1em; padding-bottom:0em">
+	<label for="pcategory">Category:</label>
+	<input list="pcategory" name="pcategory" required>
+	<datalist id="pcategory">
+		<?php $testObj->categoryOpt(); ?>
+	</datalist>
+	<br>
+	</div>
+
+	<div style="padding: 1em; padding-bottom:0em">
+	<label for="psubcat">Sub-category (optional):</label>
+	<input list="psubcat" name="psubcat">
+	<datalist id="psubcat">
+		<option value="Shirt">
+		<option value="T-shirt">
+		<option value="Sweater">
+		<option value="Jacket">
+		<option value="Sweatpants">
+		<option value="Jeans">
+		<option value="Shorts">
+		<option value="Dresses">
+	</datalist>
+	<br>
+	</div>
+
+	<div style="padding: 1em; padding-bottom:0em">
+	<label for="pbrand">Brand Name:</label>
+	<input list="pbrand" name="pbrand" required>
+	<datalist id="pbrand">
+		<?php $testObj->brandOpt(); ?>
+	</datalist>
+	<br>
+	</div>
+
+	<div style="padding: 1em; padding-bottom:0em;">
+	<label for="size">Size:</label>
+	<select name="size" required>
+		<option value="S">Small</option>
+		<option value="M">Medium</option>
+		<option value="L">Large</option>
+		<option value="XL">Extra Large</option>
+	</select>
+	<br>
+	</div>
+
+	<div style="padding: 1em; padding-bottom:0em">
+	<label for="pcolor">Color:</label>
+	<input list="pcolor" name="pcolor" title="First letter must be capitalized." required>
+	<datalist id="pcolor">
+		<?php $testObj->colorOpt(); ?>
+	</datalist>
+	<br>
+	</div>
+
+	<div style="padding: 1em; padding-bottom:0em">
+	<label for="price">Price (omit <em>$</em>):</label>
+	<input type="number" name="price" step="0.01" min="0.01" max="99999999.99" required/>
+	<br>
+	</div>
+
+	<div style="padding:1em;">
+	<label for="image">Upload an image: </label>
+	<input type="file" name="imagefile" accept="image/png" required/>
+	</div>
+
+	<div style="padding-left:70%;">
+	<input type="submit" name="Submit" value="Submit" style="width:95%; background-color:#a9d665;border-color:dimgray; border-radius: 4px; height: 3em;"/>
+	</div>
 </form>
-</ul>
+</div>
+</div>
+
 </body>
 </html>
 
-<?php
-error_reporting(0);
-include "connect.php";
-$testObj = new Dbh();
-
-$name = $_POST['pname'];
-$color =  $_POST['pcolor'];
-$category = $_POST['pcategory'];
-$subcategory = $_POST['psubcat'];
-$description = $_POST['pdesc'];
-$brand = $_POST['pbrand'];
-$size = $_POST['csizes'];
-$price = $_POST['price'];
-
-if (empty($description)) {
-	$description = 'N/A';
-}
-
-if (empty($subcategory)) {
-	$subcategory = 'N/A';
-}
-
-if (empty($name) || empty($color) || empty($category) || empty($brand) || empty($size) || empty($price)) {
-	echo 'Please fill out the missing fields.';
-} else {
-	$testObj->insertproduct($name, $color, $category, $subcategory, $description, $brand, $size, $price);
-}
-
-?>
