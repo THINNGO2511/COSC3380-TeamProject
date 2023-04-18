@@ -4,7 +4,7 @@
 </head>
 <body>
 <div class="title;">
-<h1> Umaporium Staff - Inventory Editor </h1>
+<h1> Cougarporium Staff - Inventory Editor </h1>
 </div>
 
 <br>
