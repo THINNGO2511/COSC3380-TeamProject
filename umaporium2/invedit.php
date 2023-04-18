@@ -25,7 +25,6 @@
 <form name="insert" action="itemedit.php" method="POST" >
 	<li>Product ID</li><li><input type="text" name="pid" /></li>
 	<li>Threshold:</li><li><input type="text" name="threshold" /></li>
-	<li>Clothing Line:</li><li><input type="text" name="cline" /></li>
 	<li>Stock:</li><li><input type="text" name="stock" /></li>
 	<li>Brand:</li><li><input type="text" name="brand" /></li>
 	<li><input type="submit" /></li>
@@ -41,16 +40,11 @@ error_reporting(0);
 $TestObj = new Dbh();
 $pid = $_POST['pid'];
 $threshold = $_POST['threshold'];
-$cline = $_POST['cline'];
 $stock = $_POST['stock'];
 $brand = $_POST['brand'];
 
 if (!empty($threshold)) {
 	$TestObj->invedit('itemthreshold', $threshold, $pid);
-}
-
-if (!empty($cline)) {
-	$TestObj->invedit('clothingline', $cline, $pid);
 }
 
 if (!empty($stock)) {
