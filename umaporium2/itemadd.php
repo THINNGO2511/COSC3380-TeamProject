@@ -11,7 +11,7 @@ $testObj = new Dbh();
 </head>
 <body>
 <div class="title;">
-<h1> Umaporium Staff - Item Add </h1>
+<h1> Cougarporium Staff - Item Add </h1>
 </div>
 
 <br>
