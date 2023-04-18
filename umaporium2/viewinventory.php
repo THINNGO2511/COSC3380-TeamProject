@@ -18,7 +18,7 @@ table {
 </head>
 <body>
 <div class="title">
-<h1> Umaporium - View Inventory </h1>
+<h1> Cougarporium - View Inventory </h1>
 </div>
 
 <br>
