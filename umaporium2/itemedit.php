@@ -29,9 +29,18 @@ if($_GET['upload']=='success') {
 	echo "<h2 style='color:green; text-align:center;'>Item changes successful!</h2>";
 }
 ?>
+<table style="border:none; width:100%;">
+	<thead>
+		<tr>
+			<th style="border:none; width:40%">FORM</th>
+			<th style="border:none; width:60%">BROWSE ITEMS</th>
+		</tr>
+	</thead>
+	<tbody>
+			<tr>
+				<td style="border:none;">
 
-<div style="padding-left:1.5em;">
-<div style="padding-left:1em; font-size: 1.5em; border-style:groove; width:60%;">
+<div style="padding-left:1em;font-size: 1em; border-style:groove; width:70%;">
 
 <form method="POST" action="upload.php?function=edit" enctype="multipart/form-data">
 	<div style="padding: 1em; padding-bottom:0em">
@@ -122,6 +131,14 @@ if($_GET['upload']=='success') {
 	</div>
 </form>
 </div>
-</div>
+				</td>
+				<td style="border:none">
+				<div style="height: 40em;overflow:auto;">
+					<?php $testObj->listings();?>
+				</div>
+				</td>
+			</tr>
+	</tbody>
+</table>
 </body>
 </html>
