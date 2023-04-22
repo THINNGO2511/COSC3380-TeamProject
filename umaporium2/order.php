@@ -28,6 +28,7 @@ $dbh = new Dbh();
 				<p>Sub-total <span class = "price" style ="color:black"><b>$ <?php echo number_format($dbh->cartTotal($_SESSION["userid"]), 2, '.', '') ?></b></span></p>
 				<?php 
 				$pre = $dbh->cartTotal($_SESSION["userid"]);
+				$pre = $dbh->discount($_SESSION["userid"], $pre); 
 				$tax = $pre * .0825;	
 				?>
 				<p>Tax (8.25%) <span class = "price" style ="color:black"><b>$ <?php echo number_format($tax, 2, '.', '') ?></b>
