@@ -97,4 +97,28 @@ if(isset($_POST['Submit'])) {
 
     }
 
+    if ($_GET['function']=='inv') { //for invedit
+	$pid = $_POST['pid'];
+	$threshold = $_POST['threshold'];
+	$stock = $_POST['stock'];
+	$brand = $_POST['brand'];
+
+	if (!empty($threshold)) {
+		$TestObj->invedit('itemthreshold', $threshold, $pid);
+	}
+
+	if (!empty($stock)) {
+		$TestObj->invedit('o_stock', $stock, $pid);
+	}
+
+	if (!empty($brand)) {
+		$TestObj->invedit('brand', $brand, $pid);
+	}
+
+	if (empty($pid)) {
+		echo "Please enter a Product ID.";
+	}
+
+	header("Location: invedit.php?upload=success");
+
 } 
