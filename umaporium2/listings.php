@@ -38,7 +38,6 @@ margin:auto;
 <h1 style="font-size: 23px"> - Item Listings - </h1>
 <br>
 
-<!-- <div style="width: 50%; border-radius: 24px; align-items: center"> -->
 <div style="width: 50%; border-radius: 24px; display: flex; justify-content: center; align-items: center; flex-direction: column; background-color: white;">
 <h3 style="color:black;text-align:center"> Enter a search term </h3><br>
 	<form method="POST">

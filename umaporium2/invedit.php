@@ -8,86 +8,102 @@ $testObj = new Dbh();
 <html>
 <head>
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script">
 <title>Staff: Edit Inventory</title>
 </head>
 <body>
-<div class="title;">
-<h1> Cougarporium Staff - Inventory Editor </h1>
+
+<nav>
+	<h1 style="color:#fff;font-size: 2.25em; font-family: 'Dancing Script'; margin: 0">
+		Cougarporium
+	</h1>
+</nav>
+
+<br>
+
+<script>
+	function navigateBackToStaff() {
+	window.location.href = 'staffportal.php';		
+	}
+</script>
+
+<div style="display: flex; justify-content: center; align-items: center; padding-right: 20px;">
+	<div class="column4" onclick="navigateBackToStaff()">
+		Return to Portal
+	</div>
 </div>
 
 <br>
-<div class="title">
-<button style="height:10%;width:100%" onclick="window.location.href='staffportal.php'"> Return to Staff Portal </button>
-</div>
 
-<br>
-<div class="default">
+<!-- <div class="default">
 <p> Use the form below to edit inventory listings in the database. Enter the new details below as applicable, and enter the unique PRODUCT ID to apply them to the selected product.</p>
-</div><br>
+</div> -->
+
+<br>
+
 <?php
 if($_GET['upload']=='success') {
 	echo "<h2 style='color:green; text-align:center;'>Inventory changes successful!</h2>";
 }
 ?>
-<table style="border:none; width:100%;">
+<table style="border:none; width:85%; margin-left: auto; margin-right: auto;">
 	<thead>
 		<tr>
-			<th style="border:none; width:40%">FORM</th>
-			<th style="border:none; width:60%">BROWSE INVENTORY</th>
+		<th style="border:none; width:40%; text-decoration: underline; ">FORM</th>
+			<th style="border:none; width:60%; text-decoration: underline; ">BROWSE INVENTORY</th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<td style="border:none;">
+		<td style="border:none; padding-right: 1em;">
 
-<div style="padding-left: 1em; font-size: 1em; border-style:groove; width:70%;">
-<form method="POST" action="upload.php?function=inv" enctype="multipart/form-data">
-	<div style="padding: 1em; padding-bottom:0em">
-	<label for="pid">Product ID:</label>
-	<input type="text" name="pid" required/>
-	<br>
-	</div>
+		<form method="POST" action="upload.php?function=inv" enctype="multipart/form-data" class="edit-form" style="margin-top: -337px; width: 40%">
+			<br><br>
+			<div style="display: flex; flex-direction: column; align-items: center; padding-bottom: 10px">
+			<label for="pid">Product ID:</label>
+			<input type="text" name="pid" required/>
+			</div>
 
-	<div style="padding: 1em; padding-bottom:0em">
-	<label for="threshold">Item Threshold:</label>
-	<input type="text" name="threshold" required/>
-	<br>
-	</div>
+			<div style="display: flex; flex-direction: column; align-items: center; padding-bottom: 10px">
+			<label for="threshold">Item Threshold:</label>
+			<input type="text" name="threshold" required/>
+			</div>
 
-	<div style="padding: 1em; padding-bottom:0em">
-	<label for="stock">Stock:</label>
-	<input type="text" name="stock" required/>
-	<br>
-	</div>
+			<div style="display: flex; flex-direction: column; align-items: center; padding-bottom: 10px">
+			<label for="stock">Stock:</label>
+			<input type="text" name="stock" required/>
+			</div>
 
-	<div style="padding: 1em; padding-bottom:0em">
-	<label for="brand">Brand:</label>
-	<input type="text" name="brand" required/>
-	<br>
-	</div>
+			<div style="display: flex; flex-direction: column; align-items: center; padding-bottom: 10px">
+			<label for="brand">Brand:</label>
+			<input type="text" name="brand" required/>
+			</div>
 
-	<div style="padding-left:70%;">
-	<input type="submit" name="Submit" value="Submit" style="width:95%; background-color:#a9d665; border-color:dimgray; border-radius: 4px; height: 3em;"/>
-	</div>
-</form>
-</div>
+			<div style="padding-bottom: 25px; padding-top: 10px;">
+			<input type="submit" name="Submit" value="Submit" style="transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#e89890'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='';"/>
+			</div>
+		</form>
 
-			</td>
-			<td style="border:none">
-			<div style="height: 40em; overflow:auto;">
-				<table style="margin-left: auto; margin-right: auto; width: 100%; border: 3.5px solid black; background-color: white;">
-				<tr>
+		</td>
+
+		<td style="border:none; padding-left: 1em;">
+		<div style="height: 40em; overflow:auto; border: 3.5px solid black; background-color: white; border-radius: 24px; padding: 14px;">
+				<!-- <table style="margin-left: auto; margin-right: auto; width: 100%; border: black; background-color: white;"> -->
+				<table style="width: 100%;">
+					<tr>
 					<th>Item Threshold</th>
 					<th>Brand</th>
 					<th>Product ID</th>
 					<th>Stock</th>
-				</tr>
+					</tr>
 				<?php $testObj->viewinventory();?>
 				</table>
 			</div>
-			</td>
+		</td>
+
 		</tr>
 	</tbody>
 </table>
+<div style="padding-bottom: 50px"></div>
 </body>
 </html>
