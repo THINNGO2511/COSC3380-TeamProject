@@ -3,6 +3,7 @@
  <head>
    <title>Login Portal</title>
    <link rel="stylesheet" href="styles.css">
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script">
  </head>
  <body>
  <header>
@@ -48,7 +49,8 @@
        <!-- ********** user login form ********* -->
        <form action="includes/login.inc.php" method="post" class="center-form">
          <p style="text-decoration: underline; margin-top: 7px; margin-bottom: 5px">_______________</p>
-         <p style="font-size: 17px; text-decoration: underline; margin-top: 10px; margin-bottom: 5px">Returning User</p>
+         <!-- <p style="font-size: 17px; text-decoration: underline; margin-top: 10px; margin-bottom: 5px">Returning User</p> -->
+         <p style="font-size: 25px; margin-top: 10px; margin-bottom: 5px; font-family:'Dancing Script';">Returning User</p>
 
 
            <div style="display: flex; flex-direction: column; align-items: center;">
