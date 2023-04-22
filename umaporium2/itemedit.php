@@ -8,7 +8,7 @@ $testObj = new Dbh();
 <html>
 <head>
 <link rel="stylesheet" href="styles.css">
-<title>Admin: Edit Item</title>
+<title>Staff: Edit Item</title>
 </head>
 <body>
 <div class="title;">

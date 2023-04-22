@@ -7,17 +7,29 @@ $testObj = new Dbh();
 <html>
 <head>
 <link rel="stylesheet" href="styles.css">
-<title>Admin: Add Item</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script">
+<title>Staff: Add Item</title>
 </head>
 <body>
-<div class="title;">
-<h1> Cougarporium Staff - Item Add </h1>
-</div>
+
+<nav>
+	<h1 style="color:#fff;font-size: 2.25em; font-family: 'Dancing Script'; margin: 0">
+		Cougarporium
+	</h1>
+</nav>
 
 <br>
 
-<div class="title">
-<button style="height:10%;width:100%" onclick="window.location.href='staffportal.php'"> Return to Staff Portal </button>
+<script>
+	function navigateBackToStaff() {
+	window.location.href = 'staffportal.php';		
+	}
+</script>
+
+<div style="display: flex; justify-content: center; align-items: center; padding-right: 20px;">
+	<div class="column4" onclick="navigateBackToStaff()">
+		Return to Portal
+	</div>
 </div>
 
 <br>
@@ -28,33 +40,35 @@ if($_GET['upload']=='success') {
 }
 ?>
 
-<p> Use the form below to add a new item to the database. </p>
-<div style="padding-left:1.5em;">
-<div style="padding-left:1em; font-size: 1.5em; border-style:groove; width:60%;">
+<div class="login-form" style="width: 32%">
+
+<br>
+
+<p style="font-size: 15px"> Use the form to add a new item to the database. </p>
+
+<br>
 
 <form method="POST" action="upload.php?function=add" enctype="multipart/form-data">
-	<div style="padding: 1em; padding-bottom:0em">
+
+	<div style="display: flex; flex-direction: column; align-items: center;">
 	<label for="pname">Product Name:</label>
 	<input type="text" name="pname" required/>
-	<br>
 	</div>
-
-	<div style="padding: 1em; padding-bottom:0em">
+	<div style="padding-top: 10px"></div>
+	<div style="display: flex; flex-direction: column; align-items: center;">
 	<label for="pdesc">Product Description (optional):</label>
 	<input type="text" name="pdesc"/>
-	<br>
 	</div>
-
-	<div style="padding: 1em; padding-bottom:0em">
+	<div style="padding-top: 10px"></div>
+	<div style="display: flex; flex-direction: column; align-items: center;">
 	<label for="pcategory">Category:</label>
 	<input list="pcategory" name="pcategory" required>
 	<datalist id="pcategory">
 		<?php $testObj->categoryOpt(); ?>
 	</datalist>
-	<br>
 	</div>
-
-	<div style="padding: 1em; padding-bottom:0em">
+	<div style="padding-top: 10px"></div>
+	<div style="display: flex; flex-direction: column; align-items: center;">
 	<label for="psubcat">Sub-category (optional):</label>
 	<input list="psubcat" name="psubcat">
 	<datalist id="psubcat">
@@ -67,19 +81,17 @@ if($_GET['upload']=='success') {
 		<option value="Shorts">
 		<option value="Dresses">
 	</datalist>
-	<br>
 	</div>
-
-	<div style="padding: 1em; padding-bottom:0em">
+	<div style="padding-top: 10px"></div>
+	<div style="display: flex; flex-direction: column; align-items: center;">
 	<label for="pbrand">Brand Name:</label>
 	<input list="pbrand" name="pbrand" required>
 	<datalist id="pbrand">
 		<?php $testObj->brandOpt(); ?>
 	</datalist>
-	<br>
 	</div>
-
-	<div style="padding: 1em; padding-bottom:0em;">
+	<div style="padding-top: 10px"></div>
+	<div style="display: flex; flex-direction: column; align-items: center;">
 	<label for="size">Size:</label>
 	<select name="size" required>
 		<option value="S">Small</option>
@@ -87,35 +99,35 @@ if($_GET['upload']=='success') {
 		<option value="L">Large</option>
 		<option value="XL">Extra Large</option>
 	</select>
-	<br>
 	</div>
-
-	<div style="padding: 1em; padding-bottom:0em">
+	<div style="padding-top: 10px"></div>
+	<div style="display: flex; flex-direction: column; align-items: center;">
 	<label for="pcolor">Color:</label>
 	<input list="pcolor" name="pcolor" title="First letter must be capitalized." required>
 	<datalist id="pcolor">
 		<?php $testObj->colorOpt(); ?>
 	</datalist>
-	<br>
 	</div>
-
-	<div style="padding: 1em; padding-bottom:0em">
+	<div style="padding-top: 10px"></div>
+	<div style="display: flex; flex-direction: column; align-items: center;">
 	<label for="price">Price (omit <em>$</em>):</label>
 	<input type="number" name="price" step="0.01" min="0.01" max="99999999.99" required/>
-	<br>
 	</div>
-
-	<div style="padding:1em;">
+	<div style="padding-top: 10px"></div>
+	<div style="display: flex; flex-direction: column; align-items: center;">
 	<label for="image">Upload an image: </label>
 	<input type="file" name="imagefile" accept="image/png" required/>
 	</div>
+	<div style="padding-top: 10px"></div>
 
-	<div style="padding-left:70%;">
-	<input type="submit" name="Submit" value="Submit" style="width:95%; background-color:#a9d665;border-color:dimgray; border-radius: 4px; height: 3em;"/>
+	<div style="display: flex; flex-direction: column; align-items: center; padding-bottom: 30px; padding-top: 20px;">
+  	<input type="submit" name="Submit" value="Submit" style="transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#e89890'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='';" />
 	</div>
+
 </form>
+
 </div>
-</div>
+<br><br>
 
 </body>
 </html>

@@ -15,7 +15,7 @@
 		border: 3.5px solid black;
 		}
 	</style>
-<title>Inventory</title>
+<title>Staff: Edit Inventory</title>
 
 </head>
 <body>
@@ -34,7 +34,7 @@
 	}
 </script>
 
-<div style="display: flex; justify-content: center; align-items: center;">
+<div style="display: flex; justify-content: center; align-items: center; padding-right: 20px;">
 	<div class="column4" onclick="navigateBackToStaff()">
 		Return to Portal
 	</div>

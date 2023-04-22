@@ -147,7 +147,6 @@
    }
      
    .column4:hover {
-      /* background-color: #f75353;  */
       background-color: #e89890; 
       box-shadow: 3px 3px 15px rgb(89, 89, 89);
       transition: all .2s;
