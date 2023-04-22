@@ -3,10 +3,7 @@ session_start();
 require_once(__DIR__ . '/connect.php');
 $dbh = new Dbh();
 $itemCount = $dbh->cartCount($_SESSION["userid"]);
-if(!empty($_POST['97'])){
-	echo 'PLEASE FOR GODS SAKE PLEASE WORK FOR ONCE';
-	$_POST['97'];
-}
+
 
 if(isset($_POST['submit'])){
 	$cart = $_SESSION['cartArray'];
