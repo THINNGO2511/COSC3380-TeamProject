@@ -38,7 +38,7 @@
             <input type="password" name="password" id="password" placeholder="8-20 characters" required>
         </div>
         <div style="padding-bottom: 30px; padding-top: 20px;">
-            <input type="submit" value="Register!">
+            <input type="submit" value="Register!" style="transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#e89890'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='';">
         </div>
     </form>
 

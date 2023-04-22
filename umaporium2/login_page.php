@@ -63,7 +63,7 @@
                <input type="password" name="password" id="password" placeholder="8-20 characters" required>
            </div>
            <div style="padding-bottom: 25px; padding-top: 10px;">
-               <input type="submit" value="Login">
+               <input type="submit" value="Login" style="transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#e89890'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='';">
            </div>
        </form>
    </div>

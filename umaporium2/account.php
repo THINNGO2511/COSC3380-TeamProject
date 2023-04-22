@@ -68,7 +68,7 @@ $orderHistory = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <input type="text" id="age" name="age" value="<?php echo $userInfo['age']; ?>"><br>
 
             <div style="padding-bottom: 30px;">
-                <input type="submit", name="submit", value="Update">
+                <input type="submit", name="submit", value="Update" style="transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#e89890'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='';">
             </div>
         </form>
     </div>
