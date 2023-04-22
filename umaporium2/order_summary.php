@@ -1,59 +1,66 @@
 <?php
 session_start();
-require_once(__DIR__ . '/connect.php');
+require_once('connect.php');
+// Check if the user is logged in
+if (!isset($_SESSION["userid"])) {
+    header("Location: login_page.php");
+    exit;
+}
+
+// create a new dbh object
 $dbh = new Dbh();
+
+// get the order id from the URL parameter
 $orderid = $_GET['orderid'];
-$meta = $dbh->orderData($orderid);
+// call the orderData function and get the order data
+$orderData = $dbh->orderData($orderid);
 
 ?>
 
+<!DOCTYPE html>
 <html>
-<link rel="stylesheet" href="styles.css">
-<?php 
-if (!$dbh->orderRetrievalError($_SESSION["userid"], $orderid)) { ?>
 <head>
-<title><?php echo "ORDER #$orderid" ?></title>
+	<title>Order Summary</title>
+	<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-  <nav>
-  <?php include('./includes/navbar.php');?>
-  </nav>
-    </header>	
-    <h1>Order Summary: <u><?php echo "ORDER #$orderid" ?></u></h1>
-    <br>
-    <h3>Status: <?php echo $meta['status'] ?></h3>
-    <h3>Order Date: <?php echo $meta['date'] ?></h3>
-    <br>
-    <div style="text-align:center">
-        <h2><u>Items</u></h2>
-        <?php $dbh->getOrder($_SESSION["userid"], $orderid) ?>
-        <b><b>
-    </div>
-    <div style="text-align: right; padding-right:20em;">
-    <h3>Total: $<?php echo $meta['price'];?></h3>
-    </div>
+<header>
+ <nav>
+ <?php include('./includes/navbar.php');?>
+ </nav>
+</header>
+<h1>Order Summary: Order #<?php echo $orderid; ?></h1>
+<h2>Order Status: <?php echo $orderData[0]['orderstatus']; ?></h1>
+	<table>
+		<thead>
+			<tr>
+				<th>Item Name</th>
+				<th>Quantity</th>
+				<th>Total Price</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php
+			$totalItems = 0;
+			$totalPrice = 0;
+
+			foreach ($orderData as $item) {
+				if (!empty($item['p_name']) && !empty($item['quant']) && !empty($item['total'])) {
+					echo '<tr>';
+					echo '<td>' . $item['p_name'] . '</td>';
+					echo '<td>' . $item['quant'] . '</td>';
+					echo '<td>' . $item['total'] . '</td>';
+					echo '</tr>';
+					$totalItems += $item['quant'];
+					$totalPrice += $item['total'];
+				}
+			}
+			?>
+		</tbody>
+	</table>
+
+	<p>Total items: <?php echo $totalItems; ?></p>
+	<p>Total price: <?php echo $totalPrice; ?></p>
+
 </body>
-<?php }
-
-
-else { //user unathorized?>
-  <head>
-  <title>ERROR</title>
-  </head>
-  <body>
-    <header>
-    <nav>
-    <?php include('./includes/navbar.php');?>
-    </nav>
-    </header>	
-    <br><br>
-    <h1>ERROR!</h1><br>
-    <h1>Hmmm... Looks like this order does not exist under your account.</h1>
-    <div style="text-align:center">
-    <button onclick="window.location.href='account.php'">Back to My Account</button>
-    </div>
-  </body>
-<?php } ?>
-
 </html>

@@ -328,6 +328,7 @@ class Dbh {
 	}
 
 	public function insertOrder($c_id, $price){
+		
 		$sql = 'SELECT * FROM shoppingcart WHERE customerid = ?';
 		$stmt = $this->connect()->prepare($sql);
 		$stmt->execute([$c_id]);
@@ -459,14 +460,25 @@ class Dbh {
 
 	
 	public function orderData($orderid){
-		// Retrieve some data about the order(date, status, total), stuff it into a key-value array, and return said array.
-		$sql = 'SELECT orderdate, orderstatus, price FROM ordr WHERE orderid = ?';
+		$sql = 'SELECT o.orderid, o.orderdate, o.orderstatus, p.p_name, p.price, ql.quant, (ql.quant * p.price) AS total
+				FROM ordr o
+				JOIN unnest(o.p_id_list) WITH ORDINALITY AS pl(p_id, p_id_order) ON true
+				JOIN product p ON p.p_id = pl.p_id
+				JOIN unnest(o.quant_list) WITH ORDINALITY AS ql(quant, quant_order) ON ql.quant_order = pl.p_id_order
+				WHERE o.orderid = ?
+				GROUP BY o.orderid, o.orderdate, o.orderstatus, p.p_name, p.price, ql.quant
+		';
 		$stmt = $this->connect()->prepare($sql);
 		$stmt->execute([$orderid]);
-		$order = $stmt->fetch();
-		$meta = array('date' => $order['orderdate'], 'status' => $order['orderstatus'], 'price' => $order['price']);
-		return $meta;
+		
+		$orderData = $stmt->fetchAll(); // fetch all rows from the result set
+		
+		return $orderData;
 	}
+	
+	
+	
+	
 
 	public function getOrder($uid, $orderid) {
 		$query = 'SELECT * FROM ordr WHERE customerid = ? AND orderid = ?';
