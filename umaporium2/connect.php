@@ -229,7 +229,8 @@ class Dbh {
 		$_SESSION['cartArray'] = $intArray;
 		?>
 		<form action="cart.php" method="post" id = "cart">
-		<?php foreach($intArray as $p_id){ ?> 
+		<?php foreach($intArray as $p_id){ 
+				$this->displayProduct($p_id);?> 
 				<label for="quantity">Quantity:</label>
 				<select id=	"<?php echo $p_id;?>" name="<?php echo $p_id;?>">  
 				<option value="1" selected> 1 </option>
@@ -238,7 +239,7 @@ class Dbh {
 				<option value="4"> 4 </option>
 				<option value="5"> 5 </option>
 				</select>
-			<?php $this->displayProduct($p_id);
+			<?php 
 		}
 		?>
 
