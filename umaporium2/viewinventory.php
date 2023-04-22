@@ -15,7 +15,7 @@
 		border: 3.5px solid black;
 		}
 	</style>
-<title>Staff: Edit Inventory</title>
+<title>Staff: View Inventory</title>
 
 </head>
 <body>
