@@ -16,8 +16,8 @@
     
     <!-- User signup form -->
     <div class="login-form">
-    <form action="includes/register.php" method="post"class="center-form">
-    <p style="font-size: 24px; margin-top: 20px; margin-bottom: 10px; font-family:'Dancing Script'; ">Join us!</p>
+    <form action="includes/register.php" method="post" class="center-form">
+        <p style="font-size: 24px; margin-top: 20px; margin-bottom: 10px; font-family:'Dancing Script'; ">Join us!</p>
         <div style="display: flex; flex-direction: column; align-items: center;">
             <label for="fname">First Name: </label>
             <input type="text" name="fname" id="fname" placeholder="first name" required>

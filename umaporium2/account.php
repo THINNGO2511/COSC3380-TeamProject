@@ -38,6 +38,7 @@ $orderHistory = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <title>My Account</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script">
 </head>
 <body>
     <header>
@@ -46,25 +47,38 @@ $orderHistory = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </nav>
     </header>
     <main>
-        <h1>Account Settings</h1>
-        <form action="update_customer.php" method="POST">
+    <h2 style="font-size: 2em; color: black;"><center>SETTINGS</center></h2>
+    <div class="login-form">
+        <form action="update_customer.php" method="POST" class="center-form">
+            <p style="font-size: 30px; margin-top: 20px; margin-bottom: 10px; font-family:'Dancing Script'; ">Account</p>
+
             <label for="firstname">First Name:</label>
             <input type="text" id="firstname" name="firstname" value="<?php echo $userInfo['namefirst']; ?>"><br>
+            
             <label for="lastname">Last Name:</label>
             <input type="text" id="lastname" name="lastname" value="<?php echo $userInfo['namelast']; ?>"><br>
+
             <label for="address">Address:</label>
             <input type="text" id="address" name="address" value="<?php echo $userInfo['address']; ?>"><br>
+
             <label for="phone">Phone:</label>
             <input type="text" id="phone" name="phone" value="<?php echo $userInfo['phonenumber']; ?>"><br>
+
             <label for="age">Age:</label>
             <input type="text" id="age" name="age" value="<?php echo $userInfo['age']; ?>"><br>
-            <input type="submit", name="submit", value="Update">
-        </form>
 
-    <h1>Order History</h1>
+            <div style="padding-bottom: 30px;">
+                <input type="submit", name="submit", value="Update">
+            </div>
+        </form>
+    </div>
+
     <?php if (count($orderHistory) == 0) { ?>
         <p>No orders found.</p>
-    <?php } else { ?>
+        <?php } else { ?>
+        
+        <div style="width: 50%; border-radius: 24px; border: 3.5px solid black; display: flex; justify-content: center; align-items: center; flex-direction: column; background-color: white; margin: 50px auto;">
+        <p style="font-size: 30px; margin-top: 20px; margin-bottom: 10px; font-family:'Dancing Script'; ">Order History</p>
         <table>
             <thead>
                 <tr>
@@ -86,8 +100,20 @@ $orderHistory = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </tr>
                 <?php } ?>
             </tbody>
-            </table>
+        </table>
+        <br>
+        </div>
+
     <?php } ?>
-</main>
+
+    <footer>
+        <nav>
+        <p style="color:#fff;">
+            <a href="https://github.com/THINNGO2511/COSC3380-TeamProject" target="_blank" class="team-link">A Team 8 Project</a>. Copyrighted COSC 3380, UH, 2023.
+        </p>
+        </nav>
+    </footer>
+
+    </main>
 </body>
 </html>

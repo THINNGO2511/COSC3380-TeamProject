@@ -84,13 +84,10 @@ $TestObj2->displaylist();
 <br><br><br>
 </div>
 
-
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-
 
 <h2> Click one of the options above, or use our Navigation Bar up top for more! </h2>
 </main>
-
 
 <footer>
  <nav>
@@ -99,9 +96,6 @@ $TestObj2->displaylist();
    </p>
  </nav>
 </footer>
-
-
-
 
 </body>
 </html>

@@ -34,12 +34,12 @@ margin:auto;
   </nav>
 </header>	
 
-<h1 style="font-size: 60px; font-family:'Dancing Script'"> Cougarporium </h1>
+<h1 style="font-size: 50px; font-family:'Dancing Script'; "> Cougarporium </h1>
 <h1 style="font-size: 23px"> - Item Listings - </h1>
 <br>
 
 <!-- <div style="width: 50%; border-radius: 24px; align-items: center"> -->
-<div style="width: 50%; border-radius: 24px; display: flex; justify-content: center; align-items: center; flex-direction: column;">
+<div style="width: 50%; border-radius: 24px; display: flex; justify-content: center; align-items: center; flex-direction: column; background-color: white;">
 <h3 style="color:black;text-align:center"> Enter a search term </h3><br>
 	<form method="POST">
 		<label for="keyword">Keyword:</label>
