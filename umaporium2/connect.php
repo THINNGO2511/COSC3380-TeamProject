@@ -247,7 +247,23 @@ class Dbh {
 		</form>
 		<?php
 	}
-	
+	public function discount($c_id, $price){
+		$query = 'SELECT customerid, count(*) FROM ordr where customerid = ? GROUP BY customerid';
+		$stmt = $this->connect()->prepare($query);
+		$stmt->execute([$c_id]);
+		$eligible = $stmt->fetch();
+		$discount = 0.00;
+		if($eligible['count'] > 10){
+			$discount = 0.05 * $price;
+			 echo '<p>Discount (5.00%) <span class = "price" style ="color:black"><b>$ '.$discount.'</b></span></p>';
+			$newPrice = $price - $discount;
+			$discPrice = number_format($newPrice, 2, '.', '');
+			return($discPrice);
+		}
+		else{
+			return($price);
+		}
+	}
 	public function displayOrder($c_id){
 		$query = 'SELECT array_to_json(p_id_list) AS productlist FROM shoppingcart WHERE customerid = ?';
 		$stmt = $this->connect()->prepare($query);
