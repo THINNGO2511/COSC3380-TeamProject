@@ -31,7 +31,6 @@ if (isset($_GET['error']) && $_GET['error'] == 'invalid_password') {
     else {
     ?>
     
-    <!-- <h2 style="color: black ; padding-top: 20px;"><center>STAFF LOGIN</center></h2> -->
     <h2 style="font-family:'Dancing Script'; font-size: 2.5em"><center>Staff Portal</center></h2>
 
       <div class="login-form">

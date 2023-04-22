@@ -1,5 +1,6 @@
 <html>
 <head>
+<title>Staff Portal</title>
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script">
 </head>
