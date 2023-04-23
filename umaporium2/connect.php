@@ -186,17 +186,18 @@ class Dbh {
 	}
 
 	public function viewinventory() {
-		$sql = 'SELECT * FROM inventory;';
+		$sql = 'SELECT * FROM inventory ORDER BY productid ASC;';
 		$stmt = $this->connect()->query($sql);
 
 		while($row = $stmt->fetch()) {
 			echo '<tr>';
-			echo '<td>' . $row['itemthreshold'] . '</th>';
-			echo '<td>' . $row['brand'] . '</th>';
 			echo '<td>' . $row['productid'] . '</th>';
+			echo '<td>' . $row['brand'] . '</th>';
+			echo '<td>' . $row['itemthreshold'] . '</th>';
 			echo '<td>' . $row['o_stock'] . '</th>';
 			echo '</tr>';
 		}
+
 
 	}
 
