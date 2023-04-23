@@ -8,6 +8,7 @@ $dbh = new Dbh();
 <html>
 	<head>
 		<link rel = "stylesheet" href = "checkout_styles.css">
+		<title>Cougarporium - Checkout</title>
 	</head>
 	<body>
 		<h4><a href="./index.php"> < Back to homepage</a> &emsp; <a href="./cart.php"> < Shopping Cart</a></h4>
