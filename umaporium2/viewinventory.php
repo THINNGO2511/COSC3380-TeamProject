@@ -44,9 +44,9 @@
 
 <table style="background-color: white; width: 50%; table-layout: fixed; padding-top: 50px; border-radius: 24px;">
 	<tr>
-		<th>Item Threshold</th>
-		<th>Brand</th>
 		<th>Product ID</th>
+		<th>Brand</th>
+		<th>Item Threshold</th>
 		<th>Stock</th>
 	</tr>
 
@@ -60,3 +60,4 @@ $testObj->viewinventory();
 
 </body>
 </html>
+
