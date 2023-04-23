@@ -1,5 +1,6 @@
 <?php
 	include 'connect.php';
+	error_reporting(0);
 ?>
 
 
@@ -42,6 +43,21 @@
 
 <br>
 
+<div style="width: 50%; border-radius: 24px; display: flex; justify-content: center; margin: auto; align-items: center; flex-direction: column; background-color: white;">
+<h3 style="color:black;text-align:center"> Sort by: </h3><br>
+	<form method="POST">
+		<select name="sort-by">
+			<option value="">--Sort By--</option>
+			<option value="brand">Brand Name</option>
+			<option value="stock">Stock Available</option>
+			<option value="pid">Product ID</option>
+		</select>
+		<input type="submit" name="Search" class="button" value="Search" />
+	</form>
+</div> 
+
+<br>
+
 <table style="background-color: white; width: 50%; table-layout: fixed; padding-top: 50px; border-radius: 24px;">
 	<tr>
 		<th>Product ID</th>
@@ -53,11 +69,16 @@
 <?php
 
 $testObj = new Dbh();
-$testObj->viewinventory();
-?>
 
+if ($_POST['Search']) {
+	$sort = $_POST['sort-by'];
+	$testObj->viewinventory($sort);
+} else {
+	$sort = '';
+	$testObj->viewinventory($sort);
+}
+?>
 </table>
 
 </body>
 </html>
-
