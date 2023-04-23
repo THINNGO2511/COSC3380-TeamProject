@@ -7,7 +7,7 @@
 <head>
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script">
-<title>Browse Items</title>
+<title>Cougarporium - Browse Items</title>
 <style>
 table {
   margin-left: auto;
