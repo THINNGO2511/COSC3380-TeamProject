@@ -49,10 +49,11 @@ class Dbh {
 			  ORDER BY quantity_sold DESC
 			  LIMIT 10 -- change this to adjust the number of best-selling products to retrieve
 			) AS best_sellers ON product.p_id = best_sellers.p_id
+			WHERE active=true
 			ORDER BY best_sellers.quantity_sold DESC';
 		}
 		else {
-			$sql = "SELECT * FROM product";
+			$sql = "SELECT * FROM product WHERE active=true";
 			$sql .= $this->search($keyword, $sort);
 			
 		}
@@ -100,11 +101,12 @@ class Dbh {
 	}
 
 	public function search($keyword, $sort){
+		
 		if ($keyword=='' && $sort=='') {
 			return '';
 		}
 		elseif ($keyword!='') {
-			$sql = " WHERE UPPER(p_name) LIKE UPPER('%$keyword%') or UPPER(color) LIKE UPPER('%$keyword%') or UPPER(category) LIKE UPPER('%$keyword%') or UPPER(brand) LIKE UPPER('%$keyword%')";
+			$sql = " AND (UPPER(p_name) LIKE UPPER('%$keyword%') or UPPER(color) LIKE UPPER('%$keyword%') or UPPER(category) LIKE UPPER('%$keyword%') or UPPER(brand) LIKE UPPER('%$keyword%'))";
 			$sql .= $this->sortBy($sort);
 			}
 		else {
@@ -178,11 +180,11 @@ class Dbh {
 
 	}
 
-	public function getNextPID() {
+	public function getNewPID() {
 		$query = "SELECT MAX(p_id) FROM product;";
 		$stmt = $this->connect()->query($query);
 		$p_id = $stmt->fetch()['max'];
-		return $p_id+1;
+		return $p_id;
 	}
 
 	public function viewinventory() {
@@ -197,8 +199,6 @@ class Dbh {
 			echo '<td>' . $row['o_stock'] . '</th>';
 			echo '</tr>';
 		}
-
-
 	}
 
 
@@ -366,7 +366,7 @@ class Dbh {
 	}
 
 	public function displaylist() {
-		$sql = 'SELECT * FROM product ORDER BY p_id DESC LIMIT 5';
+		$sql = 'SELECT * FROM product WHERE active=true ORDER BY p_id DESC LIMIT 5';
 		$stmt = $this->connect()->query($sql);
 
 		echo "<table style='margin-left:auto;margin-right:auto;width:97%;table-layout:fixed;border: 2px solid black';>";
@@ -534,9 +534,83 @@ class Dbh {
 		$product = $stmt->fetch();
 		echo '<h3>'.$product['brand'].' - '.$product['p_name'].'('.$product['c_sizes'].')'.' <span>&emsp;$'.$product['price'].'</span></h3>';
 	}
+
+	
+	//listing functions for item edit page
+	public function adminListings($keyword='', $sort='new') {
+		if ($sort == 'bestseller') {
+			$sql = 'SELECT product.*
+			FROM product
+			INNER JOIN (
+			  SELECT p_id, COUNT(*) AS quantity_sold
+			  FROM ordr
+			  INNER JOIN product ON product.p_id = ANY(ordr.p_id_list)
+			  GROUP BY p_id
+			  ORDER BY quantity_sold DESC
+			  LIMIT 10 -- change this to adjust the number of best-selling products to retrieve
+			) AS best_sellers ON product.p_id = best_sellers.p_id
+			ORDER BY best_sellers.quantity_sold DESC';
+		}
+		else {
+			$sql = "SELECT * FROM product";
+			$sql .= $this->search($keyword, $sort);
+			
+		}
+		    $stmt = $this->connect()->query($sql);
+			$numResults = $stmt->rowCount();
+
+		
+
+		if ($numResults == 0) {
+			echo '<h2 style="color:black;text-align:center">No Results...</h2>';
+		}
+
+		else
+		{	echo '<h2 style="color:grey;text-align:right;">'.$numResults.' results found.</h2><br>';
+
+			$this->buildListings();
+			while($row = $stmt->fetch()) {
+				$imgPath = '<img src="./product_img/pid_'.$row['p_id'].'.png" alt="'.$row['description'].'" style="width:100px;height:100px;">';
+			echo '<tr>';
+			if($row['active']==true){
+			echo '<td>'.$row['p_id'].
+				'<br><br><form method="POST" action="upload.php">
+				<input type="hidden" name="pid" value="'.$row['p_id'].'">
+				<button style="background-color: #e63e32; border-radius: 8px;" type="submit" name="delete" >Delete</button></form></th>';
+			}
+			else{
+				echo '<td>'.$row['p_id'].
+					'<br><br><form method="POST" action="upload.php">
+					<input type="hidden" name="pid" value="'.$row['p_id'].'">
+					<button style="border-radius: 8px;" type="submit" name="renew" >Renew</button></form></th>';
+			}
+			echo '<td>' . $row['p_name'] .'<br>'.$imgPath. '</th>';
+			echo '<td>' . $row['color'] . '</th>';
+			echo '<td>' . $row['category'] . '</th>';
+			echo '<td>' . $row['description'] . '</th>';
+			echo '<td>' . $row['brand'] . '</th>';
+			echo '<td>' . $row['c_sizes'] . '</th>';
+			echo '<td>$' . $row['price'] . '</th>';
+			echo '</tr>';	
+			}
+			echo '</table>';
+		}
+	}
+
+	public function delItem($pid){
+		//set an item as 'inactive' (aka delete but not really)
+		$sql  = 'UPDATE product SET active=false WHERE p_id=?';
+		$stmt = $this->connect()->prepare($sql);
+		$stmt->execute([$pid]);
+		
+	}
+
+	public function renewItem($pid){
+		//renew a 'deleted' item
+		$sql  = 'UPDATE product SET active=true WHERE p_id=?';
+		$stmt = $this->connect()->prepare($sql);
+		$stmt->execute([$pid]);
+	}
 }
-
-
-
 
 ?>
