@@ -48,7 +48,7 @@ if($_GET['upload']=='success') {
 
 <br>
 
-<form method="POST" action="upload.php?function=add" enctype="multipart/form-data">
+<form method="POST" action="upload.php" enctype="multipart/form-data">
 
 	<div style="display: flex; flex-direction: column; align-items: center;">
 	<label for="pname">Product Name:</label>
@@ -121,7 +121,7 @@ if($_GET['upload']=='success') {
 	<div style="padding-top: 10px"></div>
 
 	<div style="display: flex; flex-direction: column; align-items: center; padding-bottom: 30px; padding-top: 20px;">
-  	<input type="submit" name="Submit" value="Submit" style="transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#e89890'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='';" />
+  	<input type="submit" name="itemadd" value="Submit" style="transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#e89890'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='';" />
 	</div>
 
 </form>
@@ -131,4 +131,3 @@ if($_GET['upload']=='success') {
 
 </body>
 </html>
-
