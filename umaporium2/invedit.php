@@ -57,7 +57,7 @@ if($_GET['upload']=='success') {
 		<tr>
 		<td style="border:none; padding-right: 1em;">
 
-		<form method="POST" action="upload.php?function=inv" enctype="multipart/form-data" class="edit-form" style="margin-top: -337px; width: 40%">
+		<form method="POST" action="upload.php" enctype="multipart/form-data" class="edit-form" style="margin-top: -337px; width: 40%">
 			<br><br>
 			<div style="display: flex; flex-direction: column; align-items: center; padding-bottom: 10px">
 			<label for="pid">Product ID:</label>
@@ -80,7 +80,7 @@ if($_GET['upload']=='success') {
 			</div>
 
 			<div style="padding-bottom: 25px; padding-top: 10px;">
-			<input type="submit" name="Submit" value="Submit" style="transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#e89890'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='';"/>
+			<input type="submit" name="invedit" value="Submit" style="transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#e89890'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='';"/>
 			</div>
 		</form>
 
