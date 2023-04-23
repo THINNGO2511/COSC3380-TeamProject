@@ -34,6 +34,7 @@ if(isset($_POST['submit'])){
 					</h4>
 				<?php
 					
+					
                 if($itemCount > 0) {
                     $dbh->displayCart($_SESSION["userid"]); ?> 
                 </div>
