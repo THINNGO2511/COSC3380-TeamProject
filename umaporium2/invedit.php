@@ -66,17 +66,17 @@ if($_GET['upload']=='success') {
 
 			<div style="display: flex; flex-direction: column; align-items: center; padding-bottom: 10px">
 			<label for="threshold">Item Threshold:</label>
-			<input type="text" name="threshold" required/>
+			<input type="text" name="threshold" />
 			</div>
 
 			<div style="display: flex; flex-direction: column; align-items: center; padding-bottom: 10px">
 			<label for="stock">Stock:</label>
-			<input type="text" name="stock" required/>
+			<input type="text" name="stock" />
 			</div>
 
 			<div style="display: flex; flex-direction: column; align-items: center; padding-bottom: 10px">
 			<label for="brand">Brand:</label>
-			<input type="text" name="brand" required/>
+			<input type="text" name="brand" />
 			</div>
 
 			<div style="padding-bottom: 25px; padding-top: 10px;">
@@ -96,7 +96,10 @@ if($_GET['upload']=='success') {
 					<th>Product ID</th>
 					<th>Stock</th>
 					</tr>
-				<?php $testObj->viewinventory();?>
+				<?php 
+				$sort = '';
+				$testObj->viewinventory($sort);
+				?>
 				</table>
 			</div>
 		</td>
