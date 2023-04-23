@@ -57,7 +57,7 @@ if($_GET['upload']=='success') {
 			<tr>
 				<td style="border:none; padding-right: 0.5em;">
 
-				<form method="POST" action="upload.php?function=edit" enctype="multipart/form-data" class="edit-form" style="margin-top: -70px">
+				<form method="POST" action="upload.php" enctype="multipart/form-data" class="edit-form" style="margin-top: -70px">
 					<br><br>
 					<div style="display: flex; flex-direction: column; align-items: center; padding-bottom: 10px">
 					<label for="pid">Product ID:</label>
@@ -134,7 +134,7 @@ if($_GET['upload']=='success') {
 					</div>
 
 					<div style="padding-bottom: 25px; padding-top: 10px;">
-					<input type="submit" name="Submit" value="Submit" style="transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#e89890'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='';"/>
+					<input type="submit" name="itemedit" value="Submit" style="transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#e89890'; this.style.color='white';" onmouseout="this.style.backgroundColor=''; this.style.color='';"/>
 					</div>
 
 				</form>
@@ -143,7 +143,7 @@ if($_GET['upload']=='success') {
 				<td style="border:none; padding-left: 0.5em;">
 
 				<div style="height: 40em; overflow:auto; border: 3.5px solid black; background-color: white; border-radius: 24px; padding: 14px;">
-					<?php $testObj->listings();?>
+					<?php $testObj->adminListings();?>
 				</div>
 				</td>
 
