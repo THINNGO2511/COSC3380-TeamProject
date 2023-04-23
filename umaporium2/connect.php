@@ -187,8 +187,17 @@ class Dbh {
 		return $p_id;
 	}
 
-	public function viewinventory() {
-		$sql = 'SELECT * FROM inventory ORDER BY productid ASC;';
+	public function viewinventory($sort) {
+		if ($sort == 'brand') {
+			$sql = 'SELECT * FROM inventory ORDER BY brand ASC;';
+		} else if ($sort == 'stock') {
+			$sql = 'SELECT * FROM inventory ORDER BY o_stock ASC;';
+		} else if ($sort == 'pid') {
+			$sql = 'SELECT * FROM inventory ORDER BY productid ASC;';
+		} else {
+			$sql = 'SELECT * FROM inventory ORDER BY productid ASC;';
+		}
+
 		$stmt = $this->connect()->query($sql);
 
 		while($row = $stmt->fetch()) {
@@ -199,7 +208,10 @@ class Dbh {
 			echo '<td>' . $row['o_stock'] . '</th>';
 			echo '</tr>';
 		}
+
+
 	}
+
 
 
 	public function itemedit($type, $keyword, $pid) {
