@@ -114,4 +114,4 @@ Entity Categories:
 The website uses HTML and PHP, and PostgreSQL is used for the database. To connect to the database, files connect.php and db_connect.php use the specific hosted address (the website is hosted through AWS and the database is hosted through Microsoft Azure) as well as preset username, password, and port number. For any similar database, these values could be replaced and used to connect elsewhere. 
 
 
-
+The listings page shows all the items available for purchase in the database, with an image assigned to each item. These images are stored in the product_img folder. The itemadd page (in the staff portal) lets you attach an image to new products, and this image is renamed to match the product id number of the associated product, before being saved to the product_img folder to be accessed by listings.
