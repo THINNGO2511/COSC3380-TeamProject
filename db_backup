@@ -1,0 +1,1288 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 11.18
+-- Dumped by pg_dump version 15.2
+
+-- Started on 2023-04-23 21:18:03
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 10 (class 2615 OID 2200)
+-- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+ALTER SCHEMA public OWNER TO postgres;
+
+--
+-- TOC entry 2 (class 3079 OID 16647)
+-- Name: hstore; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
+
+
+--
+-- TOC entry 4471 (class 0 OID 0)
+-- Dependencies: 2
+-- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
+
+
+--
+-- TOC entry 678 (class 1247 OID 16498)
+-- Name: cloth_sizes; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.cloth_sizes AS ENUM (
+    'XS',
+    'S',
+    'M',
+    'L',
+    'XL',
+    'XXL',
+    'XXXL'
+);
+
+
+ALTER TYPE public.cloth_sizes OWNER TO postgres;
+
+--
+-- TOC entry 292 (class 1255 OID 16774)
+-- Name: add_inventory(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.add_inventory() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	INSERT INTO inventory(itemthreshold, brand, productid, o_stock)
+VALUES(50, NEW.brand, NEW.p_id, 70);
+RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.add_inventory() OWNER TO postgres;
+
+--
+-- TOC entry 226 (class 1255 OID 16513)
+-- Name: delete_shopping_cart_entry(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.delete_shopping_cart_entry() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    UPDATE shoppingcart
+	SET p_id_list = '{}'::smallint[]
+    WHERE p_id_list = NEW.p_id_list
+	AND customerid = NEW.customerid;
+    RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.delete_shopping_cart_entry() OWNER TO postgres;
+
+--
+-- TOC entry 295 (class 1255 OID 16787)
+-- Name: update_archive(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.update_archive() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	DELETE FROM inventory WHERE productid = OLD.p_id;
+	INSERT INTO archive(p_id, p_name, color, description, category, subcategory, c_sizes, brand, price)
+	VALUES(OLD.p_id, OLD.p_name, OLD.color, OLD.description, OLD.category, OLD.subcategory, OLD.c_sizes, OLD.brand, OLD.price);
+	RETURN OLD;
+END;
+$$;
+
+
+ALTER FUNCTION public.update_archive() OWNER TO postgres;
+
+--
+-- TOC entry 293 (class 1255 OID 16514)
+-- Name: update_inventory(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.update_inventory() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+
+value varchar;
+p_idList smallint[];
+product_id smallint;
+quantList smallint[];
+BEGIN
+SELECT p_id_list INTO p_idList FROM shoppingcart WHERE customerid = NEW.customerid;
+  FOREACH product_id IN ARRAY(p_idList)
+  LOOP
+  	SELECT cart->CAST(product_id as VARCHAR) INTO value FROM shoppingcart WHERE customerid = NEW.customerid;
+    UPDATE inventory SET o_stock = o_stock - CAST(value as INTEGER) WHERE productid = product_id;
+	UPDATE ordr SET quant_list = quant_list || CAST(value as SMALLINT) WHERE customerid = NEW.customerid; 
+  END LOOP;
+  RETURN NEW;
+END;
+
+$$;
+
+
+ALTER FUNCTION public.update_inventory() OWNER TO postgres;
+
+--
+-- TOC entry 294 (class 1255 OID 16771)
+-- Name: update_shopping_cart_entry(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.update_shopping_cart_entry() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	UPDATE shoppingcart
+	SET p_id_list = '{}'::smallint[],
+	cart = ''
+	WHERE customerid = NEW.customerid;
+	RETURN NEW;
+END;
+	$$;
+
+
+ALTER FUNCTION public.update_shopping_cart_entry() OWNER TO postgres;
+
+SET default_tablespace = '';
+
+--
+-- TOC entry 201 (class 1259 OID 16515)
+-- Name: admin; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.admin (
+    namefirst character varying(50) NOT NULL,
+    namelast character varying(50) NOT NULL,
+    employeeid integer NOT NULL,
+    phonenumber character varying(20),
+    email character varying(100),
+    password character varying(100),
+    privileges integer,
+    CONSTRAINT privileges_check CHECK (((privileges = 1) OR (privileges = 2)))
+);
+
+
+ALTER TABLE public.admin OWNER TO postgres;
+
+--
+-- TOC entry 202 (class 1259 OID 16519)
+-- Name: admin_employeeid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.admin_employeeid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.admin_employeeid_seq OWNER TO postgres;
+
+--
+-- TOC entry 4472 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: admin_employeeid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.admin_employeeid_seq OWNED BY public.admin.employeeid;
+
+
+--
+-- TOC entry 218 (class 1259 OID 16776)
+-- Name: archive; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.archive (
+    p_id integer NOT NULL,
+    p_name character varying(255),
+    color character varying(20),
+    description text,
+    category character varying(20),
+    subcategory character varying(20),
+    c_sizes public.cloth_sizes,
+    brand character varying(50),
+    price numeric(10,2)
+);
+
+
+ALTER TABLE public.archive OWNER TO postgres;
+
+--
+-- TOC entry 203 (class 1259 OID 16521)
+-- Name: customer; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.customer (
+    namefirst character varying(50) NOT NULL,
+    namelast character varying(50) NOT NULL,
+    customerid integer NOT NULL,
+    phonenumber character varying(20),
+    address character varying(100),
+    email character varying(100),
+    password character varying(100),
+    membershipstatus character varying(20),
+    age integer
+);
+
+
+ALTER TABLE public.customer OWNER TO postgres;
+
+--
+-- TOC entry 204 (class 1259 OID 16524)
+-- Name: customer_customerid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.customer_customerid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.customer_customerid_seq OWNER TO postgres;
+
+--
+-- TOC entry 4473 (class 0 OID 0)
+-- Dependencies: 204
+-- Name: customer_customerid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.customer_customerid_seq OWNED BY public.customer.customerid;
+
+
+--
+-- TOC entry 205 (class 1259 OID 16526)
+-- Name: discount; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.discount (
+    quarteryear character varying(5),
+    salesthreshold numeric(10,2),
+    productid integer NOT NULL,
+    CONSTRAINT discount_salesthreshold_check CHECK ((salesthreshold >= (0)::numeric))
+);
+
+
+ALTER TABLE public.discount OWNER TO postgres;
+
+--
+-- TOC entry 206 (class 1259 OID 16530)
+-- Name: inventory; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.inventory (
+    itemthreshold character varying(20),
+    brand character varying(50),
+    clothingline character varying(50),
+    productid integer NOT NULL,
+    o_stock integer NOT NULL
+);
+
+
+ALTER TABLE public.inventory OWNER TO postgres;
+
+--
+-- TOC entry 207 (class 1259 OID 16533)
+-- Name: ordr; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.ordr (
+    orderid integer NOT NULL,
+    price double precision,
+    orderstatus character varying(20) DEFAULT 'processing'::character varying,
+    orderdate date DEFAULT CURRENT_DATE,
+    ordertime time without time zone DEFAULT CURRENT_TIME,
+    customerid integer,
+    p_id_list smallint[],
+    quant_list smallint[] DEFAULT '{}'::smallint[],
+    CONSTRAINT ordr_orderstatus_check CHECK (((orderstatus)::text = ANY (ARRAY[('processing'::character varying)::text, ('shipped'::character varying)::text, ('delivered'::character varying)::text]))),
+    CONSTRAINT ordr_price_check CHECK ((price >= (0)::double precision))
+);
+
+
+ALTER TABLE public.ordr OWNER TO postgres;
+
+--
+-- TOC entry 208 (class 1259 OID 16544)
+-- Name: ordr_orderid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.ordr_orderid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ordr_orderid_seq OWNER TO postgres;
+
+--
+-- TOC entry 4474 (class 0 OID 0)
+-- Dependencies: 208
+-- Name: ordr_orderid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.ordr_orderid_seq OWNED BY public.ordr.orderid;
+
+
+--
+-- TOC entry 209 (class 1259 OID 16546)
+-- Name: product; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.product (
+    p_id integer NOT NULL,
+    p_name character varying(255) NOT NULL,
+    color character varying(20) NOT NULL,
+    description text,
+    category character varying(20) NOT NULL,
+    subcategory character varying(20) NOT NULL,
+    c_sizes public.cloth_sizes,
+    s_sizes integer,
+    brand character varying(50),
+    price numeric(10,2),
+    image character varying(50),
+    active boolean DEFAULT true,
+    CONSTRAINT lb_shoe_size CHECK ((3 < s_sizes)),
+    CONSTRAINT shoe_and_cloth_size_not_null CHECK (((c_sizes IS NOT NULL) OR (s_sizes IS NOT NULL))),
+    CONSTRAINT ub_shoe_size CHECK ((s_sizes < 17))
+);
+
+
+ALTER TABLE public.product OWNER TO postgres;
+
+--
+-- TOC entry 210 (class 1259 OID 16555)
+-- Name: product_p_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.product_p_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.product_p_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4475 (class 0 OID 0)
+-- Dependencies: 210
+-- Name: product_p_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.product_p_id_seq OWNED BY public.product.p_id;
+
+
+--
+-- TOC entry 211 (class 1259 OID 16557)
+-- Name: sale; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.sale (
+    totalsales numeric(10,2),
+    itemssold integer,
+    totalcostofinventory numeric(10,2),
+    brand character varying(50) NOT NULL,
+    CONSTRAINT sale_itemssold_check CHECK ((itemssold >= 0)),
+    CONSTRAINT sale_totalcostofinventory_check CHECK ((totalcostofinventory >= (0)::numeric)),
+    CONSTRAINT sale_totalsales_check CHECK ((totalsales >= (0)::numeric))
+);
+
+
+ALTER TABLE public.sale OWNER TO postgres;
+
+--
+-- TOC entry 212 (class 1259 OID 16563)
+-- Name: shoppingcart; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.shoppingcart (
+    cartid integer NOT NULL,
+    customerid integer,
+    p_id_list smallint[],
+    cart public.hstore
+);
+
+
+ALTER TABLE public.shoppingcart OWNER TO postgres;
+
+--
+-- TOC entry 213 (class 1259 OID 16569)
+-- Name: shoppingcart_cartid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.shoppingcart_cartid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.shoppingcart_cartid_seq OWNER TO postgres;
+
+--
+-- TOC entry 4476 (class 0 OID 0)
+-- Dependencies: 213
+-- Name: shoppingcart_cartid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.shoppingcart_cartid_seq OWNED BY public.shoppingcart.cartid;
+
+
+--
+-- TOC entry 214 (class 1259 OID 16571)
+-- Name: stockorder; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.stockorder (
+    storderid integer NOT NULL,
+    storderquantity integer,
+    price integer,
+    storderstatus character varying(20),
+    stordertime time without time zone,
+    storderdate date,
+    productidlist integer[],
+    CONSTRAINT stockorder_price_check CHECK ((price >= 0)),
+    CONSTRAINT stockorder_productidlist_check CHECK ((cardinality(productidlist) > 0)),
+    CONSTRAINT stockorder_storderquantity_check CHECK ((storderquantity >= 0)),
+    CONSTRAINT stockorder_storderstatus_check CHECK (((storderstatus)::text = ANY (ARRAY[('processing'::character varying)::text, ('shipped'::character varying)::text, ('delivered'::character varying)::text])))
+);
+
+
+ALTER TABLE public.stockorder OWNER TO postgres;
+
+--
+-- TOC entry 215 (class 1259 OID 16581)
+-- Name: stockorder_storderid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.stockorder_storderid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.stockorder_storderid_seq OWNER TO postgres;
+
+--
+-- TOC entry 4477 (class 0 OID 0)
+-- Dependencies: 215
+-- Name: stockorder_storderid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.stockorder_storderid_seq OWNED BY public.stockorder.storderid;
+
+
+--
+-- TOC entry 216 (class 1259 OID 16583)
+-- Name: supplier; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.supplier (
+    supplierid integer NOT NULL,
+    clothinglinelist character varying(255),
+    brand character varying(50)
+);
+
+
+ALTER TABLE public.supplier OWNER TO postgres;
+
+--
+-- TOC entry 217 (class 1259 OID 16586)
+-- Name: supplier_supplierid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.supplier_supplierid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.supplier_supplierid_seq OWNER TO postgres;
+
+--
+-- TOC entry 4478 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: supplier_supplierid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.supplier_supplierid_seq OWNED BY public.supplier.supplierid;
+
+
+--
+-- TOC entry 4261 (class 2604 OID 16588)
+-- Name: admin employeeid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admin ALTER COLUMN employeeid SET DEFAULT nextval('public.admin_employeeid_seq'::regclass);
+
+
+--
+-- TOC entry 4262 (class 2604 OID 16589)
+-- Name: customer customerid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.customer ALTER COLUMN customerid SET DEFAULT nextval('public.customer_customerid_seq'::regclass);
+
+
+--
+-- TOC entry 4263 (class 2604 OID 16590)
+-- Name: ordr orderid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ordr ALTER COLUMN orderid SET DEFAULT nextval('public.ordr_orderid_seq'::regclass);
+
+
+--
+-- TOC entry 4268 (class 2604 OID 16591)
+-- Name: product p_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.product ALTER COLUMN p_id SET DEFAULT nextval('public.product_p_id_seq'::regclass);
+
+
+--
+-- TOC entry 4270 (class 2604 OID 16592)
+-- Name: shoppingcart cartid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.shoppingcart ALTER COLUMN cartid SET DEFAULT nextval('public.shoppingcart_cartid_seq'::regclass);
+
+
+--
+-- TOC entry 4271 (class 2604 OID 16593)
+-- Name: stockorder storderid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.stockorder ALTER COLUMN storderid SET DEFAULT nextval('public.stockorder_storderid_seq'::regclass);
+
+
+--
+-- TOC entry 4272 (class 2604 OID 16594)
+-- Name: supplier supplierid; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.supplier ALTER COLUMN supplierid SET DEFAULT nextval('public.supplier_supplierid_seq'::regclass);
+
+
+--
+-- TOC entry 4447 (class 0 OID 16515)
+-- Dependencies: 201
+-- Data for Name: admin; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.admin (namefirst, namelast, employeeid, phonenumber, email, password, privileges) FROM stdin;
+Elver	Galarga	2	 12345678	verga@gmail.com	$2y$10$.bN.qhq88pC/LbVycV42..KqYk4R8mL9G18WGcu1Ksx3YrCJneOgC	1
+Testing	Account	3	123456789	testingadmin@gmail.com	$2y$10$EwZ.K6cedeIUK.xr1D2vMugsQlRFqbMYg6bCRT57iS/K.Cz8OxLha	1
+\.
+
+
+--
+-- TOC entry 4464 (class 0 OID 16776)
+-- Dependencies: 218
+-- Data for Name: archive; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.archive (p_id, p_name, color, description, category, subcategory, c_sizes, brand, price) FROM stdin;
+179	newer item	White	N/A	Jacket	N/A	L	ACE Casualwear	45.00
+178	fake item	Pink	N/A	Dress	N/A	S	Cougar Clothing	56.00
+180	test item	Orange	delete	Pants	N/A	S	Granger	32.00
+\.
+
+
+--
+-- TOC entry 4449 (class 0 OID 16521)
+-- Dependencies: 203
+-- Data for Name: customer; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.customer (namefirst, namelast, customerid, phonenumber, address, email, password, membershipstatus, age) FROM stdin;
+jane	doe	3	\N	\N	janedoe@example.com	$2y$10$FHkSQ/crxlJek2Cyh26Dzug802CJTmw3d0OuQnefoANjuubPKszrG	\N	18
+sakeyna	abdulaziz	4	\N	\N	sakeyna@example.com	$2y$10$WjixXZqy6EVe.9NAOARAvuW7CQ0U5DaOHmZPMpC8nTI6MO8hWrv.y	\N	20
+Leonel	Mata	7	\N	\N	castillo3.mata@gmail.com	$2y$10$kO9RRQpxmgjXfLWmDOLm9.su96.3HRrEB8eaJEHJmG14sfvI0Zvbi	\N	33
+uma300	mat	8	713-kms	1234 I wanna end it St	castilloleonel86@gmail.com	$2y$10$.CrYe7yaRy.1bn1vjqsmWeAxhLr5EXF2VzL9PKNysXhRfBD6Esdyy	\N	44
+Jake	Powers	40			potatoes@gmail.com	$2y$10$TzlM4RsoSCqYal7MlG8ayOR2qthRN0BLOIVNm14gY7XppH1e9prOG	\N	25
+Rose	Valentine	42	\N	\N	sweetmemesaremadeofthese547@gmail.com	$2y$10$RXkCGgo3JzIpnkapZ0IJ3.4GskdzVzudQVbf3.0RFNqH27Ac1zqbe	\N	21
+Joaquin	Reymundo	44	\N	\N	dad@gmail.com	$2y$10$GpU9LBiPJvsCdyDoTBNk5OssmuFMyEXBRyE0onEjb96xG1XceR8Pq	\N	29
+testuser	testlast	46	\N	\N	test@gmail.com	$2y$10$SwhRVKbLog1biQ9.SE81n.GmhatfCVqAYO1Y1/H1NI/5Pbbal.npO	\N	17
+Thinh	Ngo	47	\N	\N	ngothinh2511@gmail.com	$2y$10$t1ac07IJhSSdzKOsqMmGy.6zuSpqAdEKSNU.8CJ/NVugk8kbfEhGO	\N	17
+Sample	User	48	9999999999	9999 nine ave	sample@gmail.com	$2y$10$tVFru/KpTmPkTHJVhha/BOPfAkQmqc.bMy6Yo0Om0UZR9zRG7c7B.	\N	99
+Cougar	Porium 	49	\N	\N	cougarporium@gmail.com	$2y$10$EysTS4tYU6CdyCx6f1f3oukaQFed3WWDibZF.GvATvtwqcG9we32i	\N	\N
+ivy	doan	50	\N	\N	ivy@gmail.com	$2y$10$Vn6yqg2Uik4WmhFihEb3weJY.Gi6LAJRq/HnbBmSOtm4Pj5Yt4cl6	\N	\N
+NiHaoMA	China#1	52	\N	\N	NiHaoMa@gmail.com	$2y$10$mtCJ1XuYUqdtUFW2BaFbi.Gunaf4nYPBO7ddHQwJYg2TCbrjgM1wC	\N	\N
+Frank	Landry	41	9999999999	\N	frankelandrywork@gmail.com	$2y$10$0f7uh41PP0Fc2B8mmZX5mOK38uRndWE7Ai3k0YyZoWlcmprzQ/Ydi	\N	15
+Sample	User	53	9999999999	9999 nine ave	sample2@gmail.com	$2y$10$Gz1S8LssrfUW9m0VYRPB2.ZkBJn.FSLheFkNNjegjVUtSqogfe56K	\N	70
+Uma	porium	45	123456789	1243 test drive	testinguser@gmail.com	$2y$10$O4BMndEgZ3vUfyK0jXQeieWs7/D8CloKq2aTT803k9pOZQCze47Pi	\N	21
+\.
+
+
+--
+-- TOC entry 4451 (class 0 OID 16526)
+-- Dependencies: 205
+-- Data for Name: discount; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.discount (quarteryear, salesthreshold, productid) FROM stdin;
+\.
+
+
+--
+-- TOC entry 4452 (class 0 OID 16530)
+-- Dependencies: 206
+-- Data for Name: inventory; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.inventory (itemthreshold, brand, clothingline, productid, o_stock) FROM stdin;
+50	Loom Clothing	\N	56	70
+50	Loom Clothing	\N	59	70
+50	Loom Clothing	\N	60	70
+50	Loom Clothing	\N	62	70
+50	Loom Clothing	\N	67	70
+50	Loom Clothing	\N	68	70
+50	Loom Clothing	\N	71	70
+50	Loom Clothing	\N	73	70
+50	Loom Clothing	\N	74	70
+50	Loom Clothing	\N	75	70
+50	Loom Clothing	\N	76	70
+50	Loom Clothing	\N	77	70
+50	Loom Clothing	\N	78	70
+50	Loom Clothing	\N	79	70
+50	Loom Clothing	\N	80	70
+50	Loom Clothing	\N	81	70
+50	Loom Clothing	\N	82	70
+50	Loom Clothing	\N	83	70
+50	Loom Clothing	\N	84	70
+50	Loom Clothing	\N	85	70
+50	Loom Clothing	\N	86	70
+50	Loom Clothing	\N	87	70
+50	Loom Clothing	\N	88	70
+50	Loom Clothing	\N	89	70
+50	Loom Clothing	\N	90	70
+50	Loom Clothing	\N	91	70
+50	Loom Clothing	\N	92	70
+50	Loom Clothing	\N	93	70
+50	Loom Clothing	\N	94	70
+50	Loom Clothing	\N	95	70
+50	Loom Clothing	\N	96	70
+50	Loom Clothing	\N	99	70
+50	Loom Clothing	\N	100	70
+50	Loom Clothing	\N	101	70
+50	Loom Clothing	\N	102	70
+50	Loom Clothing	\N	103	70
+50	Loom Clothing	\N	104	70
+50	Loom Clothing	\N	106	70
+50	Granger	\N	107	70
+50	Granger	\N	108	70
+50	Granger	\N	109	70
+50	Granger	\N	110	70
+50	Granger	\N	111	70
+50	Granger	\N	112	70
+50	Granger	\N	113	70
+50	Granger	\N	114	70
+50	Mike	\N	115	70
+50	Mike	\N	116	70
+50	Mike	\N	117	70
+50	Mike	\N	118	70
+50	Mike	\N	119	70
+50	Mike	\N	120	70
+50	Mike	\N	121	70
+50	Mike	\N	123	70
+50	Mike	\N	124	70
+50	Mike	\N	125	70
+50	Mike	\N	126	70
+50	Mike	\N	130	70
+50	Mike	\N	131	70
+50	Mike	\N	132	70
+50	Mike	\N	133	70
+50	Mike	\N	134	70
+50	Mike	\N	135	70
+50	Mike	\N	136	70
+50	Mike	\N	137	70
+50	Mike	\N	138	70
+50	ACE Casualwear	\N	139	70
+50	ACE Casualwear	\N	140	70
+50	ACE Casualwear	\N	141	70
+50	ACE Casualwear	\N	142	70
+50	ACE Casualwear	\N	143	70
+50	ACE Casualwear	\N	144	70
+50	ACE Casualwear	\N	145	70
+50	ACE Casualwear	\N	146	70
+50	ACE Casualwear	\N	148	70
+50	ACE Casualwear	\N	149	70
+50	ACE Casualwear	\N	150	70
+50	Loom Clothing	\N	53	69
+50	Mike	\N	127	69
+50	Cougar Clothing	\N	183	70
+50	Loom Clothing	\N	65	62
+50	Loom Clothing	\N	66	63
+50	Loom Clothing	\N	98	29
+50	ACE Casualwear	\N	47	55
+50	Loom Clothing	\N	52	65
+50	Loom Clothing	\N	51	66
+50	Cougar Clothing	\N	173	70
+50	North Pole Imports	\N	174	70
+50	Mike	\N	129	65
+50	Loom Clothing	\N	97	50
+50	Loom Clothing	\N	49	67
+50	Loom Clothing	\N	48	57
+50	Loom Clothing	\N	54	65
+50	Loom Clothing	\N	176	60
+50	Loom Clothing	\N	72	65
+50	Loom Clothing	\N	64	60
+50	Loom Clothing	\N	50	69
+50	Loom Clothing	\N	61	67
+50	Loom Clothing	\N	63	62
+50	Loom Clothing	\N	70	69
+50	Loom Clothing	\N	69	67
+50	Mike	\N	128	67
+50	Loom Clothing	\N	55	57
+50	Mike	\N	122	68
+50	Loom Clothing	\N	105	69
+50	Cougar Clothing	\N	170	54
+50	ACE Casualwear	\N	147	68
+50	Loom Clothing	\N	57	67
+50	Loom Clothing	\N	58	68
+50	Cougar Clothing	\N	171	64
+50	Dinosaur Inc.	\N	172	57
+50	Cougar Clothing	\N	184	70
+\.
+
+
+--
+-- TOC entry 4453 (class 0 OID 16533)
+-- Dependencies: 207
+-- Data for Name: ordr; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ordr (orderid, price, orderstatus, orderdate, ordertime, customerid, p_id_list, quant_list) FROM stdin;
+94	160.43000000000001	processing	2023-04-23	22:04:18.373154	40	{98,47,51}	{5,1,2}
+90	115.83	processing	2023-04-22	02:44:08.415665	40	{54,55}	{1,2}
+89	102.95999999999999	processing	2023-04-22	02:37:08.850096	40	{47,48}	{1,3}
+71	151.22	processing	2023-04-18	18:14:54.026144	40	{98,63,64,65,66}	{1,1,1,1,1}
+91	64.349999999999994	processing	2023-04-22	06:07:57.560573	45	{64,61}	{3,2,2,3}
+96	78.159999999999997	processing	2023-04-24	01:03:52.863236	45	{147,57}	{2,3}
+92	131.91999999999999	processing	2023-04-22	14:13:53.328206	4	{69,128,55}	{1,1,1}
+69	70.790000000000006	processing	2023-04-17	19:03:22.572085	40	{98,47}	{1,1}
+70	86.870000000000005	processing	2023-04-17	19:23:20.974836	40	{98,48,50}	{1,1,1}
+65	64.349999999999994	processing	2023-04-17	18:19:02.768913	41	{55}	{}
+86	64.349999999999994	processing	2023-04-22	01:46:06.790391	41	{47,58}	{1,1}
+85	3748.3899999999999	processing	2023-04-21	14:16:13.554422	4	{105,170,172}	{1,1,3}
+84	107.25	processing	2023-04-19	04:27:09.372047	45	{172}	{2}
+83	10920.200000000001	processing	2023-04-19	01:50:44.920169	45	{170,98,47}	{1,3,2}
+73	18366.560000000001	processing	2023-04-18	19:32:21.10631	48	{170,171,129}	{1,1,1}
+63	93.310000000000002	processing	2023-04-17	18:00:04.307508	45	{97,98,63}	{3,2,2,3}
+74	64.349999999999994	processing	2023-04-18	21:08:21.904498	49	{47}	{}
+75	3641.1399999999999	processing	2023-04-18	21:29:14.575768	50	{98,170}	{}
+76	0	processing	2023-04-18	21:29:20.516184	50	{}	{}
+77	41.829999999999998	processing	2023-04-18	21:41:40.070045	52	{98,51,54}	{}
+78	12.869999999999999	processing	2023-04-18	21:48:09.798449	41	{47}	{}
+64	80.439999999999998	processing	2023-04-17	18:01:16.417302	45	{97}	{3,2,2,3}
+80	18420.189999999999	processing	2023-04-18	23:05:44.749067	53	{170,171,129}	{}
+82	16.09	processing	2023-04-18	23:16:41.338396	53	{98}	{}
+67	80.439999999999998	processing	2023-04-17	18:51:29.348141	45	{98}	{3,2,2,3}
+79	3625.0500000000002	processing	2023-04-18	22:52:20.167086	45	{170}	{3,2,2,3}
+72	209.13999999999999	processing	2023-04-18	18:15:00.0575	45	{98,48,52}	{1,1,1}
+93	146.13999999999999	processing	2023-04-23	11:17:09.332918	4	{171,172}	{1,3}
+95	152.19999999999999	processing	2023-04-23	22:06:35.827403	40	{49,72,70,122}	{3,5,1,2}
+66	128.69999999999999	processing	2023-04-17	18:46:12.922701	40	{64,97,55}	{4,5,4,5,3,3,5,1,2}
+68	173.75	processing	2023-04-17	18:58:21.632267	40	{98,98,48}	{4,5,4,5,3,3,5,1,2}
+\.
+
+
+--
+-- TOC entry 4455 (class 0 OID 16546)
+-- Dependencies: 209
+-- Data for Name: product; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.product (p_id, p_name, color, description, category, subcategory, c_sizes, s_sizes, brand, price, image, active) FROM stdin;
+48	Green T-Shirt 	Green	A plain green t-shirt. 	Shirt	T-Shirt	M	\N	Loom Clothing	12.00	\N	t
+49	Green T-Shirt 	Green	A plain green t-shirt. 	Shirt	T-Shirt	L	\N	Loom Clothing	12.00	\N	t
+50	Green T-Shirt 	Green	A plain green t-shirt. 	Shirt	T-Shirt	XL	\N	Loom Clothing	12.00	\N	t
+51	Red T-Shirt	Red	A plain red t-shirt. 	Shirt	T-Shirt	S	\N	Loom Clothing	12.00	\N	t
+52	Red T-Shirt	Red	A plain red t-shirt. 	Shirt	T-Shirt	M	\N	Loom Clothing	12.00	\N	t
+53	Red T-Shirt	Red	A plain red t-shirt. 	Shirt	T-Shirt	L	\N	Loom Clothing	12.00	\N	t
+54	Red T-Shirt	Red	A plain red t-shirt. 	Shirt	T-Shirt	XL	\N	Loom Clothing	12.00	\N	t
+55	Blue T-Shirt	Blue	A plain blue t-shirt.	Shirt	T-Shirt	S	\N	Loom Clothing	12.00	\N	t
+56	Blue T-Shirt	Blue	A plain blue t-shirt.	Shirt	T-Shirt	M	\N	Loom Clothing	12.00	\N	t
+57	Blue T-Shirt	Blue	A plain blue t-shirt.	Shirt	T-Shirt	L	\N	Loom Clothing	12.00	\N	t
+58	Blue T-Shirt	Blue	A plain blue t-shirt.	Shirt	T-Shirt	XL	\N	Loom Clothing	12.00	\N	t
+59	Orange T-Shirt	Orange	A plain orange t-shirt.	Shirt	T-Shirt	S	\N	Loom Clothing	12.00	\N	t
+60	Orange T-Shirt	Orange	A plain orange t-shirt.	Shirt	T-Shirt	M	\N	Loom Clothing	12.00	\N	t
+61	Orange T-Shirt	Orange	A plain orange t-shirt.	Shirt	T-Shirt	L	\N	Loom Clothing	12.00	\N	t
+62	Orange T-Shirt	Orange	A plain orange t-shirt.	Shirt	T-Shirt	XL	\N	Loom Clothing	12.00	\N	t
+63	Yellow T-Shirt	Yellow	A plain yellow t-shirt.	Shirt	T-Shirt	S	\N	Loom Clothing	12.00	\N	t
+64	Yellow T-Shirt	Yellow	A plain yellow t-shirt.	Shirt	T-Shirt	M	\N	Loom Clothing	12.00	\N	t
+65	Yellow T-Shirt	Yellow	A plain yellow t-shirt.	Shirt	T-Shirt	L	\N	Loom Clothing	12.00	\N	t
+66	Yellow T-Shirt	Yellow	A plain yellow t-shirt.	Shirt	T-Shirt	XL	\N	Loom Clothing	12.00	\N	t
+67	White T-Shirt	White	A plain white t-shirt.	Shirt	T-Shirt	S	\N	Loom Clothing	12.00	\N	t
+68	White T-Shirt	White	A plain white t-shirt.	Shirt	T-Shirt	M	\N	Loom Clothing	12.00	\N	t
+69	White T-Shirt	White	A plain white t-shirt.	Shirt	T-Shirt	L	\N	Loom Clothing	12.00	\N	t
+70	White T-Shirt	White	A plain white t-shirt.	Shirt	T-Shirt	XL	\N	Loom Clothing	12.00	\N	t
+71	Black T-Shirt	Black	A plain black t-shirt.	Shirt	T-Shirt	S	\N	Loom Clothing	12.00	\N	t
+72	Black T-Shirt	Black	A plain black t-shirt.	Shirt	T-Shirt	M	\N	Loom Clothing	12.00	\N	t
+73	Black T-Shirt	Black	A plain black t-shirt.	Shirt	T-Shirt	L	\N	Loom Clothing	12.00	\N	t
+74	Black T-Shirt	Black	A plain black t-shirt.	Shirt	T-Shirt	XL	\N	Loom Clothing	12.00	\N	t
+75	Pink T-Shirt	Pink	A plain pink t-shirt.	Shirt	T-Shirt	S	\N	Loom Clothing	12.00	\N	t
+76	Pink T-Shirt	Pink	A plain pink t-shirt.	Shirt	T-Shirt	M	\N	Loom Clothing	12.00	\N	t
+77	Pink T-Shirt	Pink	A plain pink t-shirt.	Shirt	T-Shirt	L	\N	Loom Clothing	12.00	\N	t
+78	Pink T-Shirt	Pink	A plain pink t-shirt.	Shirt	T-Shirt	XL	\N	Loom Clothing	12.00	\N	t
+79	Green Collared Shirt	Green	A green collared shirt.	Shirt	Collared Shirt	S	\N	Loom Clothing	15.00	\N	t
+80	Green Collared Shirt	Green	A green collared shirt.	Shirt	Collared Shirt	M	\N	Loom Clothing	15.00	\N	t
+81	Green Collared Shirt	Green	A green collared shirt.	Shirt	Collared Shirt	L	\N	Loom Clothing	15.00	\N	t
+82	Green Collared Shirt	Green	A green collared shirt.	Shirt	Collared Shirt	XL	\N	Loom Clothing	15.00	\N	t
+83	Red Collared Shirt	Red	A red collared shirt.	Shirt	Collared Shirt	S	\N	Loom Clothing	15.00	\N	t
+84	Red Collared Shirt	Red	A red collared shirt.	Shirt	Collared Shirt	M	\N	Loom Clothing	15.00	\N	t
+85	Red Collared Shirt	Red	A red collared shirt.	Shirt	Collared Shirt	L	\N	Loom Clothing	15.00	\N	t
+86	Red Collared Shirt	Red	A red collared shirt.	Shirt	Collared Shirt	XL	\N	Loom Clothing	15.00	\N	t
+87	Blue Collared Shirt	Blue	A blue collared shirt.	Shirt	Collared Shirt	S	\N	Loom Clothing	15.00	\N	t
+88	Blue Collared Shirt	Blue	A blue collared shirt.	Shirt	Collared Shirt	M	\N	Loom Clothing	15.00	\N	t
+89	Blue Collared Shirt	Blue	A blue collared shirt.	Shirt	Collared Shirt	L	\N	Loom Clothing	15.00	\N	t
+90	Blue Collared Shirt	Blue	A blue collared shirt.	Shirt	Collared Shirt	XL	\N	Loom Clothing	15.00	\N	t
+91	Orange Collared Shirt	Orange	An orange collared shirt.	Shirt	Collared Shirt	S	\N	Loom Clothing	15.00	\N	t
+92	Orange Collared Shirt	Orange	An orange collared shirt.	Shirt	Collared Shirt	M	\N	Loom Clothing	15.00	\N	t
+93	Orange Collared Shirt	Orange	An orange collared shirt.	Shirt	Collared Shirt	L	\N	Loom Clothing	15.00	\N	t
+94	Orange Collared Shirt	Orange	An orange collared shirt.	Shirt	Collared Shirt	XL	\N	Loom Clothing	15.00	\N	t
+95	Yellow Collared Shirt	Yellow	A yellow collared shirt.	Shirt	Collared Shirt	S	\N	Loom Clothing	15.00	\N	t
+96	Yellow Collared Shirt	Yellow	A yellow collared shirt.	Shirt	Collared Shirt	M	\N	Loom Clothing	15.00	\N	t
+99	White Collared Shirt	White	A white collared shirt.	Shirt	Collared Shirt	S	\N	Loom Clothing	15.00	\N	t
+100	White Collared Shirt	White	A white collared shirt.	Shirt	Collared Shirt	M	\N	Loom Clothing	15.00	\N	t
+101	White Collared Shirt	White	A white collared shirt.	Shirt	Collared Shirt	L	\N	Loom Clothing	15.00	\N	t
+102	White Collared Shirt	White	A white collared shirt.	Shirt	Collared Shirt	XL	\N	Loom Clothing	15.00	\N	t
+103	Black Collared Shirt	Black	A black collared shirt.	Shirt	Collared Shirt	S	\N	Loom Clothing	15.00	\N	t
+104	Black Collared Shirt	Black	A black collared shirt.	Shirt	Collared Shirt	M	\N	Loom Clothing	15.00	\N	t
+105	Black Collared Shirt	Black	A black collared shirt.	Shirt	Collared Shirt	L	\N	Loom Clothing	15.00	\N	t
+106	Black Collared Shirt	Black	A black collared shirt.	Shirt	Collared Shirt	XL	\N	Loom Clothing	15.00	\N	t
+107	Jean Shorts	Blue	A pair of denim shorts.	Pants	Shorts	S	\N	Granger	20.00	\N	t
+108	Jean Shorts	Blue	A pair of denim shorts. 	Pants	Shorts	M	\N	Granger	20.00	\N	t
+98	Yellow Collared Shirt	Yellow	A yellow collared shirt.	Shirt	Collared Shirt	XL	\N	Loom Clothing	15.00	\N	f
+47	Green T- Shirt	Green	A plain green t-shirt. 	Shirt	T-Shirt	S	\N	Loom Clothing	12.00	\N	t
+109	Jean Shorts	Blue	A pair of denim shorts.	Pants	Shorts	L	\N	Granger	20.00	\N	t
+110	Jean Shorts	Blue	A pair of denim shorts.	Pants	Shorts	XL	\N	Granger	20.00	\N	t
+111	Jeans	Blue	A pair of denim pants.	Pants	N/A	S	\N	Granger	25.00	\N	t
+112	Jeans	Blue	A pair of denim pants.	Pants	N/A	M	\N	Granger	25.00	\N	t
+113	Jeans	Blue	A pair of denim pants.	Pants	N/A	L	\N	Granger	25.00	\N	t
+114	Jeans	Blue	A pair of denim pants.	Pants	N/A	XL	\N	Granger	25.00	\N	t
+115	Athletic Shorts	Blue	A pair of loose running shorts.	Pants	Shorts	S	\N	Mike	20.00	\N	t
+116	Athletic Shorts	Blue	A pair of loose running shorts.	Pants	Shorts	M	\N	Mike	20.00	\N	t
+117	Athletic Shorts	Blue	A pair of loose running shorts.	Pants	Shorts	L	\N	Mike	20.00	\N	t
+118	Athletic Shorts	Blue	A pair of loose running shorts.	Pants	Shorts	XL	\N	Mike	20.00	\N	t
+119	Athletic Shorts	Black	A pair of loose running shorts.	Pants	Shorts	S	\N	Mike	20.00	\N	t
+120	Athletic Shorts	Black	A pair of loose running shorts.	Pants	Shorts	M	\N	Mike	20.00	\N	t
+121	Athletic Shorts	Black	A pair of loose running shorts.	Pants	Shorts	L	\N	Mike	20.00	\N	t
+122	Athletic Shorts	Black	A pair of loose running shorts.	Pants	Shorts	XL	\N	Mike	20.00	\N	t
+124	Athletic Shorts	Red	A pair of loose running shorts.	Pants	Shorts	M	\N	Mike	20.00	\N	t
+125	Athletic Shorts	Red	A pair of loose running shorts.	Pants	Shorts	L	\N	Mike	20.00	\N	t
+126	Athletic Shorts	Red	A pair of loose running shorts.	Pants	Shorts	XL	\N	Mike	20.00	\N	t
+127	Running Jacket	Black	A striped running jacket.	Jacket	Athletic	S	\N	Mike	25.00	\N	t
+128	Running Jacket	Black	A striped running jacket.	Jacket	Athletic	M	\N	Mike	25.00	\N	t
+129	Running Jacket	Black	A striped running jacket.	Jacket	Athletic	L	\N	Mike	25.00	\N	t
+130	Running Jacket	Black	A striped running jacket.	Jacket	Athletic	XL	\N	Mike	25.00	\N	t
+131	Running Jacket	Blue	A striped running jacket.	Jacket	Athletic	S	\N	Mike	25.00	\N	t
+132	Running Jacket	Blue	A striped running jacket.	Jacket	Athletic	M	\N	Mike	25.00	\N	t
+133	Running Jacket	Blue	A striped running jacket.	Jacket	Athletic	L	\N	Mike	25.00	\N	t
+134	Running Jacket	Blue	A striped running jacket.	Jacket	Athletic	XL	\N	Mike	25.00	\N	t
+135	Running Jacket	Red	A striped running jacket.	Jacket	Athletic	S	\N	Mike	25.00	\N	t
+136	Running Jacket	Red	A striped running jacket.	Jacket	Athletic	M	\N	Mike	25.00	\N	t
+137	Running Jacket	Red	A striped running jacket.	Jacket	Athletic	L	\N	Mike	25.00	\N	t
+138	Running Jacket	Red	A striped running jacket.	Jacket	Athletic	XL	\N	Mike	25.00	\N	t
+139	Pajama Pants	Pink	A soft pair of pajama pants.	Pants	Pajamas	S	\N	ACE Casualwear	15.00	\N	t
+140	Pajama Pants	Pink	A soft pair of pajama pants.	Pants	Pajamas	M	\N	ACE Casualwear	15.00	\N	t
+141	Pajama Pants	Pink	A soft pair of pajama pants.	Pants	Pajamas	L	\N	ACE Casualwear	15.00	\N	t
+142	Pajama Pants	Pink	A soft pair of pajama pants.	Pants	Pajamas	XL	\N	ACE Casualwear	15.00	\N	t
+143	Pajama Pants	White w/ polka dots	A soft pair of pajama pants.	Pants	Pajamas	S	\N	ACE Casualwear	15.00	\N	t
+144	Pajama Pants	White w/ polka dots	A soft pair of pajama pants.	Pants	Pajamas	M	\N	ACE Casualwear	15.00	\N	t
+145	Pajama Pants	White w/ polka dots	A soft pair of pajama pants.	Pants	Pajamas	L	\N	ACE Casualwear	15.00	\N	t
+146	Pajama Pants	White w/ polka dots	A soft pair of pajama pants.	Pants	Pajamas	XL	\N	ACE Casualwear	15.00	\N	t
+147	Grey Sweatpants	Grey	A pair of grey sweatpants.	Pants	Sweatpants	S	\N	ACE Casualwear	20.00	\N	t
+148	Grey Sweatpants	Grey	A pair of grey sweatpants.	Pants	Sweatpants	M	\N	ACE Casualwear	20.00	\N	t
+149	Grey Sweatpants	Grey	A pair of grey sweatpants.	Pants	Sweatpants	L	\N	ACE Casualwear	20.00	\N	t
+150	Grey Sweatpants	Grey	A pair of grey sweatpants.	Pants	Sweatpants	XL	\N	ACE Casualwear	20.00	\N	t
+164	Grey Jacket	Grey	N/A	Jacket	N/A	M	\N	Mike	30.00	\N	t
+97	Funny Hat	Blue	A yellow collared shirt.	Shirt	Collared Shirt	L	\N	Loom Clothing	15.00	\N	t
+174	Santa Jacket	Red	Ho ho ho!	Jacket	N/A	XL	\N	North Pole Imports	25.00	\N	t
+123	Athltic Shorts	Red	A pair of loose running shorts.	Pants	Shorts	S	\N	Mike	20.00	\N	t
+171	Leather Dress	Brown	A dress made of leather.	Dress	N/A	M	\N	Cougar Clothing	75.00	\N	t
+172	Dinosaur Shirt	Black	A shirt with a dinosaur on it.	Shirt	T-Shirt	S	\N	Dinosaur Inc.	20.00	\N	t
+173	IT Shirt	Grey	A shirt for CS students.	Shirt	T-shirt	XL	\N	Cougar Clothing	20.00	\N	t
+170	Uma Blouse	White	A blouse inspired by our favorite professor. 	Blouse	Uma	S	\N	Cougar Clothing	3380.00	\N	t
+176	Yellower Shirt	Grey	N/A	Shirt	N/A	M	\N	Loom Clothing	12.00	\N	t
+183	newest item	Red	editing item	Pants	Sweatpants	L	\N	Cougar Clothing	34.00	\N	f
+184	Invisible Shirt	Invisible	A shirt with no image.	Shirt	T-shirt	S	\N	Cougar Clothing	20.00	\N	t
+\.
+
+
+--
+-- TOC entry 4457 (class 0 OID 16557)
+-- Dependencies: 211
+-- Data for Name: sale; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.sale (totalsales, itemssold, totalcostofinventory, brand) FROM stdin;
+\.
+
+
+--
+-- TOC entry 4458 (class 0 OID 16563)
+-- Dependencies: 212
+-- Data for Name: shoppingcart; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.shoppingcart (cartid, customerid, p_id_list, cart) FROM stdin;
+27	48	{}	"129"=>"3", "170"=>"5", "171"=>"2"
+17	4	{}	"171"=>"1", "172"=>"3"
+28	49	{}	"47"=>"5"
+29	50	{98}	"98"=>"1"
+14	40	{}	"49"=>"3", "70"=>"1", "72"=>"5", "122"=>"2"
+20	41	{}	"47"=>"3", "58"=>"2"
+30	52	{}	"51"=>"1", "54"=>"1", "98"=>"1"
+24	45	{}	"57"=>"3", "147"=>"2"
+16	3	\N	\N
+18	7	\N	\N
+19	8	\N	\N
+22	42	\N	\N
+23	44	\N	\N
+25	46	\N	\N
+26	47	\N	\N
+31	53	{}	"98"=>"1"
+\.
+
+
+--
+-- TOC entry 4460 (class 0 OID 16571)
+-- Dependencies: 214
+-- Data for Name: stockorder; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.stockorder (storderid, storderquantity, price, storderstatus, stordertime, storderdate, productidlist) FROM stdin;
+\.
+
+
+--
+-- TOC entry 4462 (class 0 OID 16583)
+-- Dependencies: 216
+-- Data for Name: supplier; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.supplier (supplierid, clothinglinelist, brand) FROM stdin;
+\.
+
+
+--
+-- TOC entry 4479 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: admin_employeeid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.admin_employeeid_seq', 3, true);
+
+
+--
+-- TOC entry 4480 (class 0 OID 0)
+-- Dependencies: 204
+-- Name: customer_customerid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.customer_customerid_seq', 53, true);
+
+
+--
+-- TOC entry 4481 (class 0 OID 0)
+-- Dependencies: 208
+-- Name: ordr_orderid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.ordr_orderid_seq', 96, true);
+
+
+--
+-- TOC entry 4482 (class 0 OID 0)
+-- Dependencies: 210
+-- Name: product_p_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.product_p_id_seq', 184, true);
+
+
+--
+-- TOC entry 4483 (class 0 OID 0)
+-- Dependencies: 213
+-- Name: shoppingcart_cartid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.shoppingcart_cartid_seq', 31, true);
+
+
+--
+-- TOC entry 4484 (class 0 OID 0)
+-- Dependencies: 215
+-- Name: stockorder_storderid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.stockorder_storderid_seq', 1, false);
+
+
+--
+-- TOC entry 4485 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: supplier_supplierid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.supplier_supplierid_seq', 1, false);
+
+
+--
+-- TOC entry 4288 (class 2606 OID 16596)
+-- Name: admin admin_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admin
+    ADD CONSTRAINT admin_email_key UNIQUE (email);
+
+
+--
+-- TOC entry 4290 (class 2606 OID 16598)
+-- Name: admin admin_phonenumber_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admin
+    ADD CONSTRAINT admin_phonenumber_key UNIQUE (phonenumber);
+
+
+--
+-- TOC entry 4292 (class 2606 OID 16600)
+-- Name: admin admin_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admin
+    ADD CONSTRAINT admin_pkey PRIMARY KEY (employeeid);
+
+
+--
+-- TOC entry 4316 (class 2606 OID 16783)
+-- Name: archive archive_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.archive
+    ADD CONSTRAINT archive_pkey PRIMARY KEY (p_id);
+
+
+--
+-- TOC entry 4294 (class 2606 OID 16602)
+-- Name: customer customer_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.customer
+    ADD CONSTRAINT customer_email_key UNIQUE (email);
+
+
+--
+-- TOC entry 4296 (class 2606 OID 16604)
+-- Name: customer customer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.customer
+    ADD CONSTRAINT customer_pkey PRIMARY KEY (customerid);
+
+
+--
+-- TOC entry 4298 (class 2606 OID 16606)
+-- Name: discount discount_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.discount
+    ADD CONSTRAINT discount_pkey PRIMARY KEY (productid);
+
+
+--
+-- TOC entry 4300 (class 2606 OID 16610)
+-- Name: inventory inventory_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.inventory
+    ADD CONSTRAINT inventory_pkey PRIMARY KEY (productid);
+
+
+--
+-- TOC entry 4302 (class 2606 OID 16612)
+-- Name: ordr ordr_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ordr
+    ADD CONSTRAINT ordr_pkey PRIMARY KEY (orderid);
+
+
+--
+-- TOC entry 4304 (class 2606 OID 16614)
+-- Name: product product_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.product
+    ADD CONSTRAINT product_pkey PRIMARY KEY (p_id);
+
+
+--
+-- TOC entry 4306 (class 2606 OID 16616)
+-- Name: sale sale_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.sale
+    ADD CONSTRAINT sale_pkey PRIMARY KEY (brand);
+
+
+--
+-- TOC entry 4308 (class 2606 OID 16618)
+-- Name: shoppingcart shoppingcart_customerid_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.shoppingcart
+    ADD CONSTRAINT shoppingcart_customerid_key UNIQUE (customerid);
+
+
+--
+-- TOC entry 4310 (class 2606 OID 16620)
+-- Name: shoppingcart shoppingcart_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.shoppingcart
+    ADD CONSTRAINT shoppingcart_pkey PRIMARY KEY (cartid);
+
+
+--
+-- TOC entry 4312 (class 2606 OID 16622)
+-- Name: stockorder stockorder_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.stockorder
+    ADD CONSTRAINT stockorder_pkey PRIMARY KEY (storderid);
+
+
+--
+-- TOC entry 4314 (class 2606 OID 16624)
+-- Name: supplier supplier_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.supplier
+    ADD CONSTRAINT supplier_pkey PRIMARY KEY (supplierid);
+
+
+--
+-- TOC entry 4323 (class 2620 OID 16775)
+-- Name: product add_inventory_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER add_inventory_trigger AFTER INSERT ON public.product FOR EACH ROW EXECUTE PROCEDURE public.add_inventory();
+
+
+--
+-- TOC entry 4321 (class 2620 OID 16625)
+-- Name: ordr update_inventory_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER update_inventory_trigger AFTER INSERT ON public.ordr FOR EACH ROW EXECUTE PROCEDURE public.update_inventory();
+
+
+--
+-- TOC entry 4322 (class 2620 OID 16626)
+-- Name: ordr update_shopping_cart_entry_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER update_shopping_cart_entry_trigger AFTER INSERT ON public.ordr FOR EACH ROW EXECUTE PROCEDURE public.delete_shopping_cart_entry();
+
+
+--
+-- TOC entry 4317 (class 2606 OID 16627)
+-- Name: discount discount_productid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.discount
+    ADD CONSTRAINT discount_productid_fkey FOREIGN KEY (productid) REFERENCES public.product(p_id);
+
+
+--
+-- TOC entry 4318 (class 2606 OID 16632)
+-- Name: inventory inventory_productid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.inventory
+    ADD CONSTRAINT inventory_productid_fkey FOREIGN KEY (productid) REFERENCES public.product(p_id);
+
+
+--
+-- TOC entry 4319 (class 2606 OID 16637)
+-- Name: ordr ordr_customerid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ordr
+    ADD CONSTRAINT ordr_customerid_fkey FOREIGN KEY (customerid) REFERENCES public.customer(customerid);
+
+
+--
+-- TOC entry 4320 (class 2606 OID 16642)
+-- Name: shoppingcart shoppingcart_customerid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.shoppingcart
+    ADD CONSTRAINT shoppingcart_customerid_fkey FOREIGN KEY (customerid) REFERENCES public.customer(customerid);
+
+
+--
+-- TOC entry 4470 (class 0 OID 0)
+-- Dependencies: 10
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE USAGE ON SCHEMA public FROM PUBLIC;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+-- Completed on 2023-04-23 21:18:15
+
+--
+-- PostgreSQL database dump complete
+--
+
