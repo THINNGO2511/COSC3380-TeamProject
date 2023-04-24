@@ -10,8 +10,8 @@ Domain knowledge:
 Domain of Discourse (Miniworld):
 - The database represents an online brand-oriented clothing store.
 - The multi-brand online clothing store sells different articles of clothing, accessories, and shoes for any kind of customer, men, women, and kids. Customers may browse item categories, perform a search for their desired clothing items, and even filter search results. They can choose the size, color, and quantity of the item before adding it to their cart. Customers are able to view their shopping cart, edit and delete items from the cart, and view their subtotal. They also get notified if an item from their cart has changed in price or gone out of stock. The website is managed directly by employees, who can add or remove items as needed. Customers may also have the option to be notified about out-of-stock items once they return.
-- The website keeps track of how much stock it has to sell from each brand, and will automatically send orders to suppliers (brand-managed warehouses) to restock in order to keep up with customer demand. All clothing items belong to specific brands - featuring logos and copyrighted material only produced by specific companies - that the store is authorized to distribute.
-- Website also tracks which brands, clothing lines, size’s are selling the most to further determine the demographic of users to be targeted. The clothing lines and items that see the least sales will be flagged for discount prices in future quarters.
+- The website keeps track of how much stock it has to sell from each brand. All clothing items belong to specific brands that the store is authorized to distribute.
+- Website also tracks which brands, clothing lines, size’s are selling the most to further determine the demographic of users to be targeted. 
 
 Entity Categories:
 1. Product
@@ -91,16 +91,11 @@ Entity Categories:
 - Relationships:
     - Orders MADE_BY Customer (M:1)
     - Multiple Products IN_A Order (M:1)
-    - Multiple Products MAKE_UP a Stock Order (M:1)
     - Orders CONTRIBUTE_TO Sales (M:N)
-    - Sales INFLUENCE Stock Orders (M:1)
-    - Products RECEIVE Discount (1:1)
-    - Inventory CREATES Discounts (1:M)
-    - Inventory CREATES Stock Orders (1:M)
+    - Orders RECEIVE Discounts (1:M)
     - Products STORED_IN Cart
     - Cart CREATES Orders
     - Admin CREATES Products
-    - Stock_Orders REPLENISH Inventory
 
 - Constraints:
     - Product stock cannot be negative
@@ -109,12 +104,14 @@ Entity Categories:
     - Two products can’t have the same ID number
     - Customer accounts can’t modify or create products
     - Users can’t make orders or have a cart
-    - Products in cart and per order can’t exceed 50
-    - Customers can’t access orders and carts of other customers
-    - Product stock or product price must be reduced if sales fall under threshold
-    - Restock order must be sent if product falls below stock threshold and supplier is able
+    - Customers can’t access orders and carts of other customer
 
 - Conceptual Schema
     - A map of the concepts, entities, and relationships laid out for this database can be seen in the image below.
     ![Screenshot](ERdiagramPicture.png)
+   
+------------------------------------
+The website uses HTML and PHP, and PostgreSQL is used for the database. To connect to the database, files connect.php and db_connect.php use the specific hosted address (the website is hosted through AWS and the database is hosted through Microsoft Azure) as well as preset username, password, and port number. For any similar database, these values could be replaced and used to connect elsewhere. 
+
+
 
