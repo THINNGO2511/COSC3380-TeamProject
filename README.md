@@ -113,9 +113,11 @@ Entity Categories:
 ------------------------------------
 The website uses HTML and PHP, and PostgreSQL is used for the database. To connect to the database, files connect.php and db_connect.php use the specific hosted address (the website is hosted through AWS and the database is hosted through Microsoft Azure) as well as preset username, password, and port number. For any similar database, these values could be replaced and used to connect elsewhere. 
 
-While you can access the website through the provided link, to actually install the files and run through localhost, you will need Apache web server, XAMPP, or an alternative that utilizes PHP and Apache. (XAMPP is recommended.) Everything in the cougarporium folder needs to be extracted into your 'htdocs' folder before it will run successfully. 
+While you can access the website through the provided link, to actually install the files and run through localhost, you will need Apache web server, XAMPP, or an alternative that utilizes PHP and Apache. (XAMPP is recommended.) Everything in the umaporium2 folder needs to be extracted into your 'htdocs' folder before it will run successfully. 
 
 
+The classes and includes folder contain several functions for use throughout the website (i.e. the navbar) as well as essential user authentication features that lock off/allow access to certain parts of the site as to protect sensitive data. connect.php and upload.php are two files that also contain several critical functions, these being used to run most of the database query/reports pages.
 
+styles.css is our primary stylesheet for the website, giving a unified aesthetic for the website, though some pages have individual style elements to fit the functions of the page. 
 
 The listings page shows all the items available for purchase in the database, with an image assigned to each item. These images are stored in the product_img folder. The itemadd page (in the staff portal) lets you attach an image to new products, and this image is renamed to match the product id number of the associated product, before being saved to the product_img folder to be accessed by listings.
