@@ -502,10 +502,17 @@ class Dbh {
 		$stmt->execute([$orderid]);
 		
 		$orderData = $stmt->fetchAll(); // fetch all rows from the result set
+
+		$sql2 = 'SELECT price FROM ordr
+		WHERE orderid = ?';
+
+		$stmt2 = $this->connect()->prepare($sql2); // fixed the variable name here
+		$stmt2->execute([$orderid]);
 		
-		return $orderData;
-	}
-	
+		$totalforOrder = $stmt2->fetchAll(); // fetch all rows from the result set
+		return array($orderData, $totalforOrder); // using an array to return both variables
+}
+
 	
 	
 	

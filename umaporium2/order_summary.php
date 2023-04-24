@@ -13,7 +13,8 @@ $dbh = new Dbh();
 // get the order id from the URL parameter
 $orderid = $_GET['orderid'];
 // call the orderData function and get the order data
-$orderData = $dbh->orderData($orderid);
+list($orderData, $totalforOrder) = $dbh->orderData($orderid);
+
 
 ?>
 
@@ -75,7 +76,8 @@ $orderData = $dbh->orderData($orderid);
 		</table>
 
 		<p style="font-size: 18px; margin-top: 15px; margin-bottom: 0px;">Total items: <?php echo $totalItems; ?></p>
-		<p style="font-size: 18px; margin-top: 5px; margin-bottom: 0px;">Total price: $<?php echo $totalPrice; ?></p>
+		<p style="font-size: 18px; margin-top: 5px; margin-bottom: 0px;">Total price: $<?php echo $totalforOrder[0]['price']; ?></p>
+
 		<p style="text-decoration: underline; margin-top: 0px; margin-bottom: 0px">__________________</p>
 
 		<script>
