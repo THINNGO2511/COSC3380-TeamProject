@@ -64,7 +64,7 @@ $orderData = $dbh->orderData($orderid);
 						echo '<tr>';
 						echo '<td>' . $item['p_name'] . '</td>';
 						echo '<td>' . $item['quant'] . '</td>';
-						echo '<td>' . $item['total'] . '</td>';
+						echo '<td>$' . $item['total'] . '</td>';
 						echo '</tr>';
 						$totalItems += $item['quant'];
 						$totalPrice += $item['total'];
@@ -75,7 +75,7 @@ $orderData = $dbh->orderData($orderid);
 		</table>
 
 		<p style="font-size: 18px; margin-top: 15px; margin-bottom: 0px;">Total items: <?php echo $totalItems; ?></p>
-		<p style="font-size: 18px; margin-top: 5px; margin-bottom: 0px;">Total price: <?php echo $totalPrice; ?></p>
+		<p style="font-size: 18px; margin-top: 5px; margin-bottom: 0px;">Total price: $<?php echo $totalPrice; ?></p>
 		<p style="text-decoration: underline; margin-top: 0px; margin-bottom: 0px">__________________</p>
 
 		<script>
